@@ -1,35 +1,31 @@
 ﻿using UnityEngine;
 
 
-/*
- * This script makes objects move towards the dog. (Makes it look like the dog is moving)
- * Requires kinematic Rigidbody2D to control the objects.
- */
+// Scrolls objects towards player
 public class ScrollingObject : MonoBehaviour
 {
-    private Rigidbody2D rigidBody;
+    private Rigidbody2D objectBody;
 
-    /*
-     * Start-method is called every time before the game is run.
-     * Use it for variable declaration.
-     */
-    void Start()
+
+    // Called once on every gaming session before Start
+    private void Awake()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
-        //The scrolling speed is set in GameControl-script
-        rigidBody.velocity = new Vector2(GameControl.instance.scrollSpeed, 0);
+        objectBody = GetComponent<Rigidbody2D>();
     }
 
-    /*
-     * Update-method is called on every new frame when the game is running.
-     * Use it for managing player input & listening for state changes.
-     */
-    void Update()
+    // Called on every start of game
+    private void Start()
+    {
+        objectBody.velocity = new Vector2(-GameControl.instance.scrollingSpeed, 0);
+    }
+
+    // Called on every game frame
+    private void Update()
     {
         //Stops background scrolling if the game ends
         if (GameControl.instance.gameOver == true)
         {
-            rigidBody.velocity = Vector2.zero;
+            objectBody.velocity = Vector2.zero;
         }
     }
 }

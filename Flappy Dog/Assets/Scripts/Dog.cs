@@ -1,85 +1,162 @@
 ﻿using UnityEngine;
 
 
-/*
- * This script controls the dog's interactions.
- * Requires Rigidbody2D to control the dog.
- */
+// Controls player's interactions
 public class Dog : MonoBehaviour
 {
     //Public variables are configurable in Unity as well
-    public float bounceForce = 400;
-    public float doubleJumpForce = 400;
+    public Sprite basicSprite;
+    public Sprite powerupSprite;
+    public float bounceUpVelocity = 8;
+    public float doubleJumpUpVelocity = 6;
     public float tiltTime = 1;
+    public float powerupColliderRadius = 0.75f;
+    public int powerupPizzaLimit = 5;
 
-    private Rigidbody2D dog;
-    private Quaternion downRotation;
-    private Quaternion upRotation;
+    private Rigidbody2D playerBody;
+    private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
+    private Quaternion upRotation = Quaternion.Euler(0, 0, 45);
     private bool isDead = false;
     private bool doubleJumpAvailable = true;
+    private bool powerupOn = false;
+    private int pizzaCount = 0;
+    private float basicColliderRadius;
 
 
-    /*
-     * Start-method is called every time before the game is run.
-     * Use it for variable declaration.
-     */
-    void Start()
+    // Called once on every gaming session before Start
+    private void Awake()
     {
-        dog = GetComponent<Rigidbody2D>(); //This attaches the Dog-GameObject to this script
-        downRotation = Quaternion.Euler(0, 0, -45);
-        upRotation = Quaternion.Euler(0, 0, 45);
+        playerBody = GetComponent<Rigidbody2D>();
+        basicColliderRadius = GetComponent<CircleCollider2D>().radius;
     }
 
-    /*
-     * Update-method is called on every new frame when the game is running.
-     * Use it for managing player input & listening for state changes.
-     */
-    void Update()
+    // Called on every game frame
+    private void Update()
     {
         if (isDead == false)
         {
+            if (powerupOn == false)
+            {
+                playerBody.velocity = new Vector2(0, playerBody.velocity.y);
+            }
+            else
+            {
+                playerBody.velocity = new Vector2(0, playerBody.velocity.y);
+            }
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
-                //Double jump functionality
-                transform.rotation = upRotation;
-                dog.velocity = Vector2.zero;
-                dog.AddForce(new Vector2(0, doubleJumpForce));
-                doubleJumpAvailable = false;
+                DoubleJump();
             }
+            //Adds downfall rotation
+            transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
         }
-        //Downfall rotation
-        transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
     }
 
-    /*
-     * This method is called when touching normal colliders (not set as triggers).
-     */
-    void OnCollisionEnter2D(Collision2D collision)
+    // Double jump functionality
+    private void DoubleJump()
+    {
+        transform.rotation = upRotation;
+        playerBody.velocity = new Vector2(playerBody.velocity.x, doubleJumpUpVelocity);
+        doubleJumpAvailable = false;
+    }
+
+    // Called on touching normal colliders (colliders not set as triggers)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (isDead == false)
         {
-            //Bounce functionality - dog bounces everytime it hits ground
-            dog.angularVelocity = 0; //Prevents dog's circle collider from starting to roll
-            dog.velocity = Vector2.zero;
-            transform.rotation = upRotation;
-            dog.AddForce(new Vector2(0, bounceForce));
-            doubleJumpAvailable = true;
+            if (powerupOn == false)
+            {
+                Bounce();
+            }
+            else
+            {
+                doubleJumpAvailable = true;
+            }
         }
     }
 
-    /*
-     * This method is called when touching colliders set as triggers.
-     */
-    void OnTriggerEnter2D(Collider2D collision)
+    // Bounce functionality
+    private void Bounce()
     {
-        //Dying fuctionality - dog dies if it hits trigger colliders
+        playerBody.angularVelocity = 0; //Prevents player's collider from rolling
+        transform.rotation = upRotation;
+        playerBody.velocity = new Vector2(playerBody.velocity.x, bounceUpVelocity);
+        doubleJumpAvailable = true;
+    }
+
+    // Called on touching colliders set as triggers
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Collision with vertical rocks
+        if (collision.gameObject.name == "rock")
+        {
+            Debug.Log("Rock collision");
+            Die();
+        }
+        //Collision with crates
+        else if (collision.gameObject.name == "crate")
+        {
+            Debug.Log("Crate collision");
+            Die();
+            //TODO: Destroy crates while on powerup
+        }
+        //Collision with pizzas
+        else if (collision.gameObject.name == "pizza")
+        {
+            Debug.Log("Pizza collision");
+            EatPizza(collision);
+        }
+    }
+
+    // Dying functionality
+    private void Die()
+    {
         isDead = true;
-
-        //Dying motion
-        dog.angularVelocity = -5;
-        dog.AddForce(new Vector2(-200, 0));
-
+        Debug.Log("Player died");
+        playerBody.velocity = new Vector2(-2, 0);
         //Informs GameControl that game is over
         GameControl.instance.GameOver();
+    }
+
+    // Crate destroying functionality
+    private void DestroyCrate()
+    {
+        //TODO: HOW TO TEMPORARILY DEACTIVATE?
+    }
+
+    // Pizza functionality
+    private void EatPizza(Collider2D collision)
+    {
+        //collision.gameObject.SetActive(false); TODO: HOW TO TEMPORARILY DEACTIVATE ?
+        Debug.Log(pizzaCount + " pizzas eaten");
+        GameControl.instance.AddPoint();
+        //Activates powerup after 5 pizzas
+        if (pizzaCount < powerupPizzaLimit - 1)
+        {
+            pizzaCount++;
+        }
+        else
+        {
+            pizzaCount = 0;
+            ActivatePowerup();
+        }
+    }
+
+    // Powerup functionality
+    private void ActivatePowerup()
+    {
+        powerupOn = true;
+        Debug.Log("Powerup activated");
+        GetComponent<SpriteRenderer>().sprite = powerupSprite;
+        GetComponent<CircleCollider2D>().radius = powerupColliderRadius;
+    }
+    private void DeactivatePowerup()
+    {
+        powerupOn = false;
+        Debug.Log("Powerup deactivated");
+        GetComponent<SpriteRenderer>().sprite = basicSprite;
+        GetComponent<CircleCollider2D>().radius = basicColliderRadius;
+        DoubleJump(); //Exit's rolling with a jump
     }
 }
