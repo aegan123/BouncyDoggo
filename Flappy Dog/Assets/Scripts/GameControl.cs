@@ -16,6 +16,7 @@ public class GameControl : MonoBehaviour
 
     private int score = 0;
     private int hiscore = 0;
+    private float timer = 0;
 
 
     // Called once on every gaming session before Start
@@ -28,6 +29,24 @@ public class GameControl : MonoBehaviour
         else if (instance != this)
         {
             Destroy(gameObject);
+        }
+    }
+
+    //GameControl doesn't need to follow frame updates. Counts score for every second.
+    void Update()
+    {
+        score++;
+        scoreText.text = "Score: " + score.ToString();
+
+        // adds points
+
+        timer += Time.deltaTime;
+
+        if (timer > 5f)
+        {
+            score += 1;
+            scoreText.text = "Score: " + score.ToString();
+            timer = 0;
         }
     }
 
