@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     public Text scoreText;
     public Text hiscoreText;
     public Button playButton;
-    public float scrollingSpeed = 4;
+    public float scrollingSpeed = 3;
     public bool gameOver;
 
     private int score = 0;
@@ -41,13 +41,20 @@ public class GameControl : MonoBehaviour
         // adds points
 
         timer += Time.deltaTime;
-
-        if (timer > 5f)
+        if (gameOver == false)
         {
-            score += 1;
-            scoreText.text = "Score: " + score.ToString();
-            timer = 0;
+            if (timer > 5f)
+            {
+                score += 1;
+                scoreText.text = "Score: " + score.ToString();
+                timer = 0;
+            }
         }
+        else
+        {
+            score = 0;
+        }
+        
     }
 
     // Called on every start of game
