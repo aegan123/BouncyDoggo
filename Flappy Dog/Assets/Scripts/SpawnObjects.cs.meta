@@ -3,7 +3,12 @@ guid: fe4b5a2f397bf604d804040977da33c1
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - mainCameraTransform: {instanceID: 0}
+  - rocksPrefab: {fileID: 1497421351174978, guid: fc4cdc83995546b46a13a7db81df444d,
+      type: 2}
+  - cratesPrefab: {instanceID: 0}
+  - pizzasPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
