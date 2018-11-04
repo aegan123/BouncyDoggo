@@ -22,6 +22,7 @@ public class GameControl : MonoBehaviour
     // Called once on every gaming session before Start
     private void Awake()
     {
+
         if (instance == null)
         {
             instance = this;
@@ -54,12 +55,14 @@ public class GameControl : MonoBehaviour
         {
             score = 0;
         }
-        
+
     }
 
     // Called on every start of game
     private void Start()
     {
+        	 SoundManager.instance.gameOver.Stop();
+    	 SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
     }
 

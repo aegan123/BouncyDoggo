@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 // Controls player's interactions
 public class Dog : MonoBehaviour
@@ -119,6 +121,11 @@ public class Dog : MonoBehaviour
     // Dying functionality
     private void Die()
     {
+    	//Stops music when dead
+    	SoundManager.instance.superMode.Stop();
+        SoundManager.instance.backgroudMusic.Stop();
+        //Plays gameove music
+        SoundManager.instance.gameOver.Play();
         isDead = true;
         Debug.Log("Player died");
         playerBody.velocity = new Vector2(-2, 0);
@@ -159,6 +166,9 @@ public class Dog : MonoBehaviour
         SpawnObjects.setCanSpawnPizza(false);
         GetComponent<SpriteRenderer>().sprite = powerupSprite;
         GetComponent<CircleCollider2D>().radius = powerupColliderRadius;
+        //Start supermode music and pause background music
+        SoundManager.instance.backgroudMusic.Pause();
+		SoundManager.instance.superMode.Play();
     }
     private void DeactivatePowerup()
     {
@@ -168,6 +178,9 @@ public class Dog : MonoBehaviour
         SpawnObjects.setCanSpawnPizza(true);
         GetComponent<SpriteRenderer>().sprite = basicSprite;
         GetComponent<CircleCollider2D>().radius = basicColliderRadius;
+        //Stop supermode music and resume background music
+        SoundManager.instance.superMode.Stop();
+        SoundManager.instance.backgroudMusic.Play();
         DoubleJump(); //Exit's rolling with a jump
     }
 }
