@@ -107,7 +107,12 @@ public class Dog : MonoBehaviour
         else if (collision.gameObject.name == "crate")
         {
             Debug.Log("Crate collision");
+            if(powerupOn){
+           		DestroyCrate();
+            }
+            else{
             Die();
+            }
             //TODO: Destroy crates while on powerup
         }
         //Collision with pizzas
@@ -136,6 +141,7 @@ public class Dog : MonoBehaviour
     // Crate destroying functionality
     private void DestroyCrate()
     {
+    	SpawnObjects.instance.destroyCrate();
         //TODO: HOW TO TEMPORARILY DEACTIVATE?
     }
 

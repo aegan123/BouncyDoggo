@@ -4,7 +4,7 @@
 // Controls all prefab object spawns
 public class SpawnObjects : MonoBehaviour
 {
-    //public static SpawnObjects instance;
+    public static SpawnObjects instance;
     public Transform mainCameraTransform;
     public float spawnDistance = 20;
     private Vector2 unusedObjectsPosition = new Vector2(-20, 0); //Some position to hide objects at start
@@ -29,6 +29,7 @@ public class SpawnObjects : MonoBehaviour
     private int currentCrate = 0;
     private float nextCrateInterval;
     private float nextCrateCountdown;
+    private GameObject crate;
 
     //Pizzas
     public GameObject pizzasPrefab;
@@ -47,6 +48,15 @@ public class SpawnObjects : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
+              //Check if there is already an instance of SpawnObjects
+            if (instance == null)
+                //if not, set it to this.
+                instance = this;
+            //If instance already exists:
+            else if (instance != this)
+                //Destroy this, this enforces our singleton pattern so there can only be one instance of SpawnObjects.
+                Destroy (gameObject);
+
         canSpawnPizza=true;
         //Initializes rocks
         rockPool = new GameObject[rockPoolSize];
@@ -84,7 +94,7 @@ public class SpawnObjects : MonoBehaviour
         {
             if (rextRockCountdown >= nextRockInterval)
             {
-                SpawnRock();
+                //SpawnRock();
             }
             if (nextCrateCountdown >= nextCrateInterval)
             {
@@ -119,8 +129,11 @@ public class SpawnObjects : MonoBehaviour
     {
         nextCrateCountdown = 0;
         //TODO: HOW TO TEMPORARILY DEACTIVATE?
-        cratePool[currentCrate].gameObject.SetActive(true);
-        cratePool[currentCrate].transform.position = new Vector2(spawnDistance, 0);
+       // cratePool[currentCrate].gameObject.SetActive(true);
+        //cratePool[currentCrate].transform.position = new Vector2(spawnDistance, 0);
+        crate=(GameObject)Instantiate(cratesPrefab, unusedObjectsPosition, Quaternion.identity);
+        crate.gameObject.SetActive(true);
+       crate.transform.position = new Vector2(spawnDistance, 0);
         nextCrateInterval = Random.Range(crateMinFrequency, crateMaxFrequency);
         if (currentCrate + 1 < cratePoolSize)
         {
@@ -136,7 +149,6 @@ public class SpawnObjects : MonoBehaviour
     private void SpawnPizza()
     {
         nextPizzaCountdown = 0;
-        //Debug.Log("REACTIVATING: " +  pizzaPool[currentPizza].gameObject.name); TODO: HOW TO TEMPORARILY DEACTIVATE?
         pizzaPool[currentPizza].gameObject.SetActive(true);
         pizzaPool[currentPizza].transform.position = new Vector2(spawnDistance, 0);
         nextPizzaInterval = Random.Range(pizzaMinFrequency, pizzaMaxFrequency);
@@ -152,5 +164,10 @@ public class SpawnObjects : MonoBehaviour
     //Set whether or not pizza spawning is possible.
     public static void setCanSpawnPizza(bool boolean){
     	canSpawnPizza=boolean;
+    }
+    //destroys the crate
+    public void destroyCrate(){
+   		 //crate.gameObject.SetActive(false);
+   		 Destroy(crate);
     }
 }
