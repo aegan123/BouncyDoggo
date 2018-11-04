@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-
 // Controls player's interactions
 public class Dog : MonoBehaviour
 {
@@ -21,6 +20,8 @@ public class Dog : MonoBehaviour
     private bool powerupOn = false;
     private int pizzaCount = 0;
     private float basicColliderRadius;
+    //Superball mode timer
+    private float timeLeft = 5.0f;
 
 
     // Called once on every gaming session before Start
@@ -42,6 +43,12 @@ public class Dog : MonoBehaviour
             else
             {
                 playerBody.velocity = new Vector2(0, playerBody.velocity.y);
+                //Superball mode timer.
+                timeLeft -= Time.deltaTime;
+ 			    	if(timeLeft < 0 ){
+         				DeactivatePowerup();
+         				timeLeft=5.0f;
+         				}
             }
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
@@ -148,6 +155,8 @@ public class Dog : MonoBehaviour
     {
         powerupOn = true;
         Debug.Log("Powerup activated");
+        //Prevents pizzas from spanwning while in superball mode.
+        SpawnObjects.setCanSpawnPizza(false);
         GetComponent<SpriteRenderer>().sprite = powerupSprite;
         GetComponent<CircleCollider2D>().radius = powerupColliderRadius;
     }
@@ -155,6 +164,8 @@ public class Dog : MonoBehaviour
     {
         powerupOn = false;
         Debug.Log("Powerup deactivated");
+        //Pizzas can spawn again.
+        SpawnObjects.setCanSpawnPizza(true);
         GetComponent<SpriteRenderer>().sprite = basicSprite;
         GetComponent<CircleCollider2D>().radius = basicColliderRadius;
         DoubleJump(); //Exit's rolling with a jump

@@ -4,6 +4,7 @@
 // Controls all prefab object spawns
 public class SpawnObjects : MonoBehaviour
 {
+    //public static SpawnObjects instance;
     public Transform mainCameraTransform;
     public float spawnDistance = 20;
     private Vector2 unusedObjectsPosition = new Vector2(-20, 0); //Some position to hide objects at start
@@ -39,10 +40,14 @@ public class SpawnObjects : MonoBehaviour
     private float nextPizzaInterval;
     private float nextPizzaCountdown;
 
+    //Other
+    private static bool canSpawnPizza=true;
+
 
     // Called on every start of game
     private void Start()
     {
+        canSpawnPizza=true;
         //Initializes rocks
         rockPool = new GameObject[rockPoolSize];
         rextRockCountdown = 0;
@@ -85,7 +90,7 @@ public class SpawnObjects : MonoBehaviour
             {
                 SpawnCrate();
             }
-            if (nextPizzaCountdown >= nextPizzaInterval)
+            if (canSpawnPizza && nextPizzaCountdown >= nextPizzaInterval)
             {
                 SpawnPizza();
             }
@@ -143,5 +148,9 @@ public class SpawnObjects : MonoBehaviour
         {
             currentPizza = 0;
         }
+    }
+    //Set whether or not pizza spawning is possible.
+    public static void setCanSpawnPizza(bool boolean){
+    	canSpawnPizza=boolean;
     }
 }
