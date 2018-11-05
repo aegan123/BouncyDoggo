@@ -10,6 +10,8 @@ public class GameControl : MonoBehaviour
 
     public Text scoreText;
     public Text hiscoreText;
+    public GameObject gameOverText;
+    public GameObject tryAgainText;
     public Button playButton;
     public float scrollingSpeed = 3;
     public bool gameOver;
@@ -87,6 +89,13 @@ public class GameControl : MonoBehaviour
             hiscoreText.text = "Hiscore: " + hiscore.ToString();
         }
         playButton.gameObject.SetActive(true);
+
+        // shows game over text
+        gameOverText.gameObject.SetActive(true);
+
+        //shows Try again? text 
+        tryAgainText.gameObject.SetActive(true);
+
     }
 
     // Starts the game over - attached to Replay button
