@@ -13,6 +13,7 @@ public class Dog : MonoBehaviour
     public float tiltTime = 1;
     public float powerupColliderRadius = 0.75f;
     public int powerupPizzaLimit = 5;
+    public float powerupDuration = 15.0f;
 
     private Rigidbody2D playerBody;
     private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
@@ -22,8 +23,6 @@ public class Dog : MonoBehaviour
     private bool powerupOn = false;
     private int pizzaCount = 0;
     private float basicColliderRadius;
-    //Superball mode timer
-    private float timeLeft = 5.0f;
 
 
     // Called once on every gaming session before Start
@@ -46,10 +45,10 @@ public class Dog : MonoBehaviour
             {
                 playerBody.velocity = new Vector2(0, playerBody.velocity.y);
                 //Superball mode timer.
-                timeLeft -= Time.deltaTime;
- 			    	if(timeLeft < 0 ){
+                powerupDuration -= Time.deltaTime;
+ 			    	if(powerupDuration < 0 ){
          				DeactivatePowerup();
-         				timeLeft=5.0f;
+         				powerupDuration=5.0f;
          				}
             }
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
@@ -97,29 +96,44 @@ public class Dog : MonoBehaviour
     // Called on touching colliders set as triggers
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //Collision with crates
+        if (collision.gameObject.name == "crate")
+        {
+            Debug.Log("Crate collision");
+            if (powerupOn)
+            {
+                SpawnObjects.instance.DestroyCrate();
+            }
+            else
+            {
+                Die();
+            }
+        }
+        //Collision with crate piles
+        else if (collision.gameObject.tag == "cratepile")
+        {
+            Debug.Log("Crate pile collision");
+            if (powerupOn)
+            {
+                SpawnObjects.instance.DestroyCratePile();
+            }
+            else
+            {
+                Die();
+            }
+        }
         //Collision with vertical rocks
-        if (collision.gameObject.name == "rock")
+        else if (collision.gameObject.name == "rock")
         {
             Debug.Log("Rock collision");
             Die();
-        }
-        //Collision with crates
-        else if (collision.gameObject.name == "crate")
-        {
-            Debug.Log("Crate collision");
-            if(powerupOn){
-           		DestroyCrate();
-            }
-            else{
-            Die();
-            }
-            //TODO: Destroy crates while on powerup
         }
         //Collision with pizzas
         else if (collision.gameObject.name == "pizza")
         {
             Debug.Log("Pizza collision");
-            EatPizza(collision);
+            SpawnObjects.instance.DestroyPizza();
+            EatPizza();
         }
     }
 
@@ -129,7 +143,7 @@ public class Dog : MonoBehaviour
     	//Stops music when dead
     	SoundManager.instance.superMode.Stop();
         SoundManager.instance.backgroudMusic.Stop();
-        //Plays gameove music
+        //Plays gameover music
         SoundManager.instance.gameOver.Play();
         isDead = true;
         Debug.Log("Player died");
@@ -138,17 +152,9 @@ public class Dog : MonoBehaviour
         GameControl.instance.GameOver();
     }
 
-    // Crate destroying functionality
-    private void DestroyCrate()
-    {
-    	SpawnObjects.instance.destroyCrate();
-        //TODO: HOW TO TEMPORARILY DEACTIVATE?
-    }
-
     // Pizza functionality
-    private void EatPizza(Collider2D collision)
+    private void EatPizza()
     {
-        //collision.gameObject.SetActive(false); TODO: HOW TO TEMPORARILY DEACTIVATE ?
         Debug.Log(pizzaCount + " pizzas eaten");
         GameControl.instance.AddPoint();
         //Activates powerup after 5 pizzas
@@ -169,7 +175,7 @@ public class Dog : MonoBehaviour
         powerupOn = true;
         Debug.Log("Powerup activated");
         //Prevents pizzas from spanwning while in superball mode.
-        SpawnObjects.setCanSpawnPizza(false);
+        SpawnObjects.SetCanSpawnPizza(false);
         GetComponent<SpriteRenderer>().sprite = powerupSprite;
         GetComponent<CircleCollider2D>().radius = powerupColliderRadius;
         //Start supermode music and pause background music
@@ -181,7 +187,7 @@ public class Dog : MonoBehaviour
         powerupOn = false;
         Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
-        SpawnObjects.setCanSpawnPizza(true);
+        SpawnObjects.SetCanSpawnPizza(true);
         GetComponent<SpriteRenderer>().sprite = basicSprite;
         GetComponent<CircleCollider2D>().radius = basicColliderRadius;
         //Stop supermode music and resume background music

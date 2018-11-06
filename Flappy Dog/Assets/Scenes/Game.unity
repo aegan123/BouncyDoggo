@@ -942,7 +942,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!224 &534689948
 RectTransform:
@@ -1098,6 +1098,7 @@ MonoBehaviour:
   tiltTime: 0.85
   powerupColliderRadius: 0.9
   powerupPizzaLimit: 5
+  powerupDuration: 15
 --- !u!1 &656230369
 GameObject:
   m_ObjectHideFlags: 0
@@ -1463,22 +1464,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCameraTransform: {fileID: 519420032}
   spawnDistance: 15
-  rocksPrefab: {fileID: 1341680617063724, guid: c8e55975cf97e754999118262deec86e,
+  obstacleMinFrequency: 3
+  obstacleMaxFrequency: 4
+  cratePrefab: {fileID: 1812628345859680, guid: fc4cdc83995546b46a13a7db81df444d,
     type: 2}
-  rockPoolSize: 5
+  cratePilePrefab: {fileID: 1345517632472580, guid: 50e83b491213a704f9b6365a5fa4d5cd,
+    type: 2}
+  rockPrefab: {fileID: 1341680617063724, guid: c8e55975cf97e754999118262deec86e, type: 2}
   rockMaxHeight: 4
-  rockMinFrequency: 3
-  rockMaxFrequency: 6
-  cratesPrefab: {fileID: 1497421351174978, guid: fc4cdc83995546b46a13a7db81df444d,
+  foodMinFrequency: 4
+  foodMaxFrequency: 6
+  pizzaPrefab: {fileID: 1860012050779972, guid: 3dc50bd0bea65e84095366791ec6d973,
     type: 2}
-  cratePoolSize: 10
-  crateMinFrequency: 3
-  crateMaxFrequency: 6
-  pizzasPrefab: {fileID: 1860012050779972, guid: 3dc50bd0bea65e84095366791ec6d973,
-    type: 2}
-  pizzaPoolSize: 20
-  pizzaMinFrequency: 0
-  pizzaMaxFrequency: 3
 --- !u!1 &1278495910
 GameObject:
   m_ObjectHideFlags: 0
