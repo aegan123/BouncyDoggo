@@ -977,6 +977,7 @@ GameObject:
   - component: {fileID: 577009631}
   - component: {fileID: 577009630}
   - component: {fileID: 577009632}
+  - component: {fileID: 577009634}
   - component: {fileID: 577009629}
   - component: {fileID: 577009633}
   m_Layer: 0
@@ -992,7 +993,7 @@ CircleCollider2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 577009628}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -1000,7 +1001,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: -0.14, y: 0}
   serializedVersion: 2
-  m_Radius: 1.0360519
+  m_Radius: 1.45
 --- !u!212 &577009630
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1096,9 +1097,33 @@ MonoBehaviour:
   bounceUpVelocity: 9
   doubleJumpUpVelocity: 10
   tiltTime: 0.85
-  powerupColliderRadius: 0.9
   powerupPizzaLimit: 5
   powerupDuration: 15
+--- !u!61 &577009634
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 577009628}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.77, y: 2.04}
+    newSize: {x: 1.28, y: 1.28}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.2, y: 1.4}
+  m_EdgeRadius: 0
 --- !u!1 &656230369
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,7 +1495,7 @@ MonoBehaviour:
     type: 2}
   cratePilePrefab: {fileID: 1345517632472580, guid: 50e83b491213a704f9b6365a5fa4d5cd,
     type: 2}
-  rockPrefab: {fileID: 1341680617063724, guid: c8e55975cf97e754999118262deec86e, type: 2}
+  rockPrefab: {fileID: 1070004157409970, guid: c8e55975cf97e754999118262deec86e, type: 2}
   rockMaxHeight: 4
   foodMinFrequency: 4
   foodMaxFrequency: 6

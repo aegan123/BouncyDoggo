@@ -11,7 +11,6 @@ public class Dog : MonoBehaviour
     public float bounceUpVelocity = 8;
     public float doubleJumpUpVelocity = 6;
     public float tiltTime = 1;
-    public float powerupColliderRadius = 0.75f;
     public int powerupPizzaLimit = 5;
     public float powerupDuration = 15.0f;
 
@@ -22,14 +21,12 @@ public class Dog : MonoBehaviour
     private bool doubleJumpAvailable = true;
     private bool powerupOn = false;
     private int pizzaCount = 0;
-    private float basicColliderRadius;
 
 
     // Called once on every gaming session before Start
     private void Awake()
     {
         playerBody = GetComponent<Rigidbody2D>();
-        basicColliderRadius = GetComponent<CircleCollider2D>().radius;
     }
 
     // Called on every game frame
@@ -147,7 +144,6 @@ public class Dog : MonoBehaviour
         SoundManager.instance.gameOver.Play();
         isDead = true;
         Debug.Log("Player died");
-        playerBody.velocity = new Vector2(-2, 0);
         //Informs GameControl that game is over
         GameControl.instance.GameOver();
     }
@@ -177,8 +173,8 @@ public class Dog : MonoBehaviour
         //Prevents pizzas from spanwning while in superball mode.
         SpawnObjects.SetCanSpawnPizza(false);
         GetComponent<SpriteRenderer>().sprite = powerupSprite;
-        GetComponent<CircleCollider2D>().radius = powerupColliderRadius;
-        //Start supermode music and pause background music
+        GetComponent<BoxCollider2D>().enabled = false;
+        GetComponent<CircleCollider2D>().enabled = true;
         SoundManager.instance.backgroudMusic.Pause();
 		SoundManager.instance.superMode.Play();
     }
@@ -189,7 +185,8 @@ public class Dog : MonoBehaviour
         //Pizzas can spawn again.
         SpawnObjects.SetCanSpawnPizza(true);
         GetComponent<SpriteRenderer>().sprite = basicSprite;
-        GetComponent<CircleCollider2D>().radius = basicColliderRadius;
+        GetComponent<BoxCollider2D>().enabled = true;
+        GetComponent<CircleCollider2D>().enabled = false;
         //Stop supermode music and resume background music
         SoundManager.instance.superMode.Stop();
         SoundManager.instance.backgroudMusic.Play();

@@ -110,16 +110,6 @@ public class SpawnObjects : MonoBehaviour
                 nextFoodCountdown = 0;
                 nextFoodInterval = Random.Range(foodMinFrequency, foodMaxFrequency);
             }
-            //Destroy objects which are out of sight
-            GameObject[] objects = new GameObject[] { crate, cratePile, rock, pizza }; //Array containing all spawnable objects
-            foreach (GameObject obj in objects)
-            {
-                if (obj != null && obj.transform.position.x + 15 < 0)
-                {
-                    Debug.Log("Destroying: " + obj.name);
-                    Destroy(obj);
-                }
-            }
         }
     }
 
