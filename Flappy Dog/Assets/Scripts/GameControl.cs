@@ -13,7 +13,6 @@ public class GameControl : MonoBehaviour
     public GameObject gameOverText;
     public GameObject tryAgainText;
     public Button playButton;
-    public float scrollingSpeed = 3;
     public bool gameOver;
 
     private int score = 0;
@@ -63,8 +62,8 @@ public class GameControl : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
-        	 SoundManager.instance.gameOver.Stop();
-    	 SoundManager.instance.backgroudMusic.Play();
+        SoundManager.instance.gameOver.Stop();
+    	SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
     }
 

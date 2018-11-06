@@ -4,6 +4,7 @@
 // Scrolls objects towards player
 public class ScrollingObject : MonoBehaviour
 {
+    public float scrollingSpeed = 6;
     private Rigidbody2D objectBody;
 
 
@@ -16,7 +17,7 @@ public class ScrollingObject : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
-        objectBody.velocity = new Vector2(-GameControl.instance.scrollingSpeed, 0);
+        objectBody.velocity = new Vector2(-scrollingSpeed, 0);
     }
 
     // Called on every game frame

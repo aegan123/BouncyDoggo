@@ -34,19 +34,16 @@ public class Dog : MonoBehaviour
     {
         if (isDead == false)
         {
-            if (powerupOn == false)
+            playerBody.velocity = new Vector2(0, playerBody.velocity.y);
+            if (powerupOn == true)
             {
-                playerBody.velocity = new Vector2(0, playerBody.velocity.y);
-            }
-            else
-            {
-                playerBody.velocity = new Vector2(0, playerBody.velocity.y);
                 //Superball mode timer.
                 powerupDuration -= Time.deltaTime;
- 			    	if(powerupDuration < 0 ){
-         				DeactivatePowerup();
-         				powerupDuration=5.0f;
-         				}
+                if (powerupDuration < 0)
+                {
+                    DeactivatePowerup();
+                    powerupDuration = 5.0f;
+                }
             }
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
@@ -61,7 +58,7 @@ public class Dog : MonoBehaviour
     private void DoubleJump()
     {
         transform.rotation = upRotation;
-        playerBody.velocity = new Vector2(playerBody.velocity.x, doubleJumpUpVelocity);
+        playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
     }
 
@@ -86,7 +83,7 @@ public class Dog : MonoBehaviour
     {
         playerBody.angularVelocity = 0; //Prevents player's collider from rolling
         transform.rotation = upRotation;
-        playerBody.velocity = new Vector2(playerBody.velocity.x, bounceUpVelocity);
+        playerBody.velocity = new Vector2(0, bounceUpVelocity);
         doubleJumpAvailable = true;
     }
 
