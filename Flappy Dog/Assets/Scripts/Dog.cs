@@ -14,6 +14,8 @@ public class Dog : MonoBehaviour
     public int powerupPizzaLimit = 5;
     public float powerupDuration = 15.0f;
 
+    public Animator animator;
+
     private Rigidbody2D playerBody;
     private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
     private Quaternion upRotation = Quaternion.Euler(0, 0, 45);
@@ -48,6 +50,7 @@ public class Dog : MonoBehaviour
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
                 DoubleJump();
+                //animator.SetBool("Clicked", false);
             }
             //Adds downfall rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
@@ -60,6 +63,8 @@ public class Dog : MonoBehaviour
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
+        animator.SetBool("Clicked", true);
+        print("double jumped");
     }
 
     // Called on touching normal colliders (colliders not set as triggers)
@@ -70,6 +75,7 @@ public class Dog : MonoBehaviour
             if (powerupOn == false)
             {
                 Bounce();
+                //animator.SetBool("Clicked", false);
             }
             else
             {
@@ -85,6 +91,8 @@ public class Dog : MonoBehaviour
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
         doubleJumpAvailable = true;
+        this.animator.SetBool("Clicked", true);
+        print("jumped");
     }
 
     // Called on touching colliders set as triggers

@@ -1159,6 +1159,7 @@ MonoBehaviour:
   tiltTime: 0.85
   powerupPizzaLimit: 5
   powerupDuration: 15
+  animator: {fileID: 577009635}
 --- !u!61 &577009634
 BoxCollider2D:
   m_ObjectHideFlags: 0
