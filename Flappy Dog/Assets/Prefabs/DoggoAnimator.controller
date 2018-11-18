@@ -8,7 +8,7 @@ AnimatorController:
   m_Name: DoggoAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Clicked
+  - m_Name: jumped
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -35,8 +35,8 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Clicked
-    m_EventTreshold: 0
+    m_ConditionEvent: jumped
+    m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102886422994304686}
   m_Solo: 0
@@ -80,7 +80,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Clicked
+    m_ConditionEvent: jumped
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102624546002337868}
@@ -103,7 +103,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Jump
-  m_Speed: 0.7
+  m_Speed: 1
   m_CycleOffset: 0.5
   m_Transitions:
   - {fileID: 1101436977879561480}
