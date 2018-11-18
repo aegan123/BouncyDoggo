@@ -568,6 +568,14 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+  m_GameObject: {fileID: 300625154}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.01, y: -3.73, z: 0}
+  m_LocalScale: {x: 1.25, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &375178841
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,6 +1319,8 @@ MonoBehaviour:
   eatPizza: {fileID: 0}
   eatChocolate: {fileID: 0}
   destroyBox: {fileID: 0}
+  canSwitch: 0
+  waitActive: 0
 --- !u!61 &577009634
 BoxCollider2D:
   m_ObjectHideFlags: 0

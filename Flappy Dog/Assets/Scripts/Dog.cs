@@ -30,7 +30,26 @@ public class Dog : MonoBehaviour
     private bool powerupOn = false;
     private int pizzaCount = 0;
 
-
+    public bool canSwitch = false;
+    public bool waitActive = false;
+    public bool waitActive2 = false;
+    
+     IEnumerator Wait(){
+        waitActive = true;
+        yield return new WaitForSeconds (0.3f);
+        canSwitch = true;
+        waitActive = false;
+        animator.SetBool("jumped", false);
+        print("jump: false");
+    }
+    private void Waiter(){
+        if(!waitActive){
+            StartCoroutine(Wait());
+            
+        }
+        
+        
+    }
     // Called once on every gaming session before Start
     private void Awake()
     {
@@ -56,6 +75,7 @@ public class Dog : MonoBehaviour
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
                 DoubleJump();
+                Waiter();
                 //animator.SetBool("Clicked", false);
             }
             //Adds downfall rotation
@@ -70,8 +90,8 @@ public class Dog : MonoBehaviour
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
-        animator.SetBool("Clicked", true);
-        print("double jumped");
+        animator.SetBool("jumped", true);
+        print("jump = true");
     }
 
     // Called on touching normal colliders (colliders not set as triggers)
@@ -82,7 +102,7 @@ public class Dog : MonoBehaviour
             if (powerupOn == false)
             {
                 Bounce();
-                //animator.SetBool("Clicked", false);
+                Waiter();
             }
             else
             {
@@ -99,8 +119,8 @@ public class Dog : MonoBehaviour
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
         doubleJumpAvailable = true;
-        this.animator.SetBool("Clicked", true);
-        print("jumped");
+        animator.SetBool("jumped", true);
+        print("jump = true");
     }
 
     // Called on touching colliders set as triggers
