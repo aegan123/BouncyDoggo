@@ -72,11 +72,19 @@ public class Dog : MonoBehaviour
                     powerupDuration = 5.0f;
                 }
             }
-            if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
+            if (doubleJumpAvailable == true)
             {
-                DoubleJump();
-                Waiter();
-                //animator.SetBool("Clicked", false);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    DoubleJump();
+                    Waiter();
+                    //animator.SetBool("Clicked", false);
+                }
+                if (Input.GetMouseButtonDown(1))
+                {
+                    Dive();
+                    Waiter();
+                }
             }
             //Adds downfall rotation
             transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
@@ -89,6 +97,17 @@ public class Dog : MonoBehaviour
     	SoundManager.instance.PlaySingle(doubleJump);
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
+        doubleJumpAvailable = false;
+        animator.SetBool("jumped", true);
+        print("jump = true");
+    }
+
+    // Diving functionality
+    private void Dive()
+    {
+        SoundManager.instance.PlaySingle(doubleJump);
+        transform.rotation = downRotation;
+        playerBody.velocity = new Vector2(0, -doubleJumpUpVelocity);
         doubleJumpAvailable = false;
         animator.SetBool("jumped", true);
         print("jump = true");

@@ -15,11 +15,10 @@ public class GameControl : MonoBehaviour
     public GameObject gameOverText;
     public GameObject tryAgainText;
     public Button playButton;
-    public bool gameOver;
     public String hiscorePath = "hiscore.txt";
+    public bool gameOver;
 
     private int score = 0;
-    private float timer = 0;
     private int hiscore;
 
 
@@ -46,30 +45,18 @@ public class GameControl : MonoBehaviour
     //GameControl doesn't need to follow frame updates. Counts score for every second.
     void Update()
     {
-        score++;
-        scoreText.text = "Score: " + score.ToString();
-
-        // adds points
-        timer += Time.deltaTime;
         if (gameOver == false)
         {
-            if (timer > 5f)
-            {
-                score += 1;
-                scoreText.text = "Score: " + score.ToString();
-                timer = 0;
-            }
+            //TODO: Giving points per time or per frame???
+            score += 1;
+            scoreText.text = "Score: " + score.ToString();
         }
-        else
-        {
-            score = 0;
-        }
-
     }
 
     // Called on every start of game
     private void Start()
     {
+        score = 0;
         hiscore = Int32.Parse(File.ReadAllText(hiscorePath));
         hiscoreText.text = "Hiscore: " + hiscore.ToString();
         Debug.Log("Current hiscore: " + hiscore.ToString());
@@ -99,8 +86,8 @@ public class GameControl : MonoBehaviour
             hiscoreText.text = "Hiscore: " + hiscore.ToString();
             using(StreamWriter writetext = new StreamWriter(hiscorePath))
 			{
-   			 writetext.WriteLine(hiscore.ToString());
-		}
+   			    writetext.WriteLine(hiscore.ToString());
+	        }
         }
         playButton.gameObject.SetActive(true);
 
