@@ -1,0 +1,7 @@
+Music:
+Music: https://www.purple-planet.com
+
+Sound Effect:
+(basic_jump-)Mario_Jumping-Mike_Koenig-989896458.wav by Mike Koenig. Licence: CC Attribution 3.0 (http://soundbible.com/1601-Mario-Jumping.html)
+(double_jump-)Jump-SoundBible.com-1007297584.wav by snottyboy. License: CC Attribution 3.0 (http://soundbible.com/1343-Jump.html)
+
