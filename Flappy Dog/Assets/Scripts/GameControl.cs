@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 
 // Controls game state
@@ -62,6 +63,13 @@ public class GameControl : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
+    string fromFile;
+    using(StreamReader readtext = new StreamReader("hiscore.txt"))
+		{
+		   fromFile = readtext.ReadLine();
+		}
+		hiscoreText.text = "Hiscore: " + fromFile;
+		hiscore=System.Int32.Parse(fromFile);
         SoundManager.instance.gameOver.Stop();
     	SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
@@ -86,13 +94,17 @@ public class GameControl : MonoBehaviour
         {
             hiscore = score;
             hiscoreText.text = "Hiscore: " + hiscore.ToString();
+            using(StreamWriter writetext = new StreamWriter("hiscore.txt"))
+			{
+   			 writetext.WriteLine(hiscore.ToString());
+		}
         }
         playButton.gameObject.SetActive(true);
 
         // shows game over text
         gameOverText.gameObject.SetActive(true);
 
-        //shows Try again? text 
+        //shows Try again? text
         tryAgainText.gameObject.SetActive(true);
 
     }
