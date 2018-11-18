@@ -32,18 +32,22 @@ public class Dog : MonoBehaviour
 
     public bool canSwitch = false;
     public bool waitActive = false;
+    public bool waitActive2 = false;
+    
      IEnumerator Wait(){
         waitActive = true;
         yield return new WaitForSeconds (0.3f);
-        print("wait is done");
         canSwitch = true;
         waitActive = false;
+        animator.SetBool("jumped", false);
+        print("jump: false");
     }
     private void Waiter(){
         if(!waitActive){
             StartCoroutine(Wait());
+            
         }
-        animator.SetBool("jumped", false);
+        
         
     }
     // Called once on every gaming session before Start
@@ -71,6 +75,7 @@ public class Dog : MonoBehaviour
             if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
             {
                 DoubleJump();
+                Waiter();
                 //animator.SetBool("Clicked", false);
             }
             //Adds downfall rotation
@@ -86,6 +91,7 @@ public class Dog : MonoBehaviour
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
         animator.SetBool("jumped", true);
+        print("jump = true");
     }
 
     // Called on touching normal colliders (colliders not set as triggers)
@@ -114,6 +120,7 @@ public class Dog : MonoBehaviour
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
         doubleJumpAvailable = true;
         animator.SetBool("jumped", true);
+        print("jump = true");
     }
 
     // Called on touching colliders set as triggers
