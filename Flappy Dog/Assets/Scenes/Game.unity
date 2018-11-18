@@ -568,14 +568,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
-  m_GameObject: {fileID: 300625154}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.01, y: -3.73, z: 0}
-  m_LocalScale: {x: 1.25, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &375178841
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,6 +1313,7 @@ MonoBehaviour:
   destroyBox: {fileID: 0}
   canSwitch: 0
   waitActive: 0
+  waitActive2: 0
 --- !u!61 &577009634
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1985,8 +1978,8 @@ MonoBehaviour:
   gameOverText: {fileID: 656230369}
   tryAgainText: {fileID: 160701586}
   playButton: {fileID: 1647137975}
-  gameOver: 0
   hiscorePath: hiscore.txt
+  gameOver: 0
 --- !u!4 &1138636172
 Transform:
   m_ObjectHideFlags: 0
@@ -2015,9 +2008,9 @@ MonoBehaviour:
   spawnDistance: 15
   obstacleMinFrequency: 3
   obstacleMaxFrequency: 4
-  cratePrefab: {fileID: 1645199200630814, guid: fc4cdc83995546b46a13a7db81df444d,
+  cratePrefab: {fileID: 1547364552648810, guid: fc4cdc83995546b46a13a7db81df444d,
     type: 2}
-  cratePilePrefab: {fileID: 1822940947687528, guid: 50e83b491213a704f9b6365a5fa4d5cd,
+  cratePilePrefab: {fileID: 1893549479934558, guid: 50e83b491213a704f9b6365a5fa4d5cd,
     type: 2}
   rockPrefab: {fileID: 1060876363260546, guid: c8e55975cf97e754999118262deec86e, type: 2}
   rockMaxHeight: 3.5
