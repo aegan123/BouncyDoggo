@@ -15,6 +15,12 @@ public class Dog : MonoBehaviour
     public float powerupDuration = 15.0f;
 
     public Animator animator;
+    //Sounds
+    public AudioClip basicJump;
+    public AudioClip doubleJump;
+    public AudioClip eatPizza;
+    public AudioClip eatChocolate;
+    public AudioClip destroyBox;
 
     private Rigidbody2D playerBody;
     private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
@@ -60,6 +66,7 @@ public class Dog : MonoBehaviour
     // Double jump functionality
     private void DoubleJump()
     {
+    	SoundManager.instance.PlaySingle(doubleJump);
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
@@ -87,6 +94,7 @@ public class Dog : MonoBehaviour
     // Bounce functionality
     private void Bounce()
     {
+    	SoundManager.instance.PlaySingle(basicJump);
         playerBody.angularVelocity = 0; //Prevents player's collider from rolling
         transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
