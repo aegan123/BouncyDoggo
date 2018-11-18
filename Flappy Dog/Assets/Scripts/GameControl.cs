@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
 
 
 // Controls game state
@@ -15,10 +16,11 @@ public class GameControl : MonoBehaviour
     public GameObject tryAgainText;
     public Button playButton;
     public bool gameOver;
+    public String hiscorePath = "hiscore.txt";
 
     private int score = 0;
-    private int hiscore = 0;
     private float timer = 0;
+    private int hiscore;
 
 
     // Called once on every gaming session before Start
@@ -33,6 +35,12 @@ public class GameControl : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        //creates initial save file if currently not existing
+        if (!File.Exists(hiscorePath))
+        {
+            File.WriteAllText(hiscorePath, "0");
+            Debug.Log("Created hiscore.txt");
+        }
     }
 
     //GameControl doesn't need to follow frame updates. Counts score for every second.
@@ -42,7 +50,6 @@ public class GameControl : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
 
         // adds points
-
         timer += Time.deltaTime;
         if (gameOver == false)
         {
@@ -63,13 +70,9 @@ public class GameControl : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
-    string fromFile;
-    using(StreamReader readtext = new StreamReader("hiscore.txt"))
-		{
-		   fromFile = readtext.ReadLine();
-		}
-		hiscoreText.text = "Hiscore: " + fromFile;
-		hiscore=System.Int32.Parse(fromFile);
+        hiscore = Int32.Parse(File.ReadAllText(hiscorePath));
+        hiscoreText.text = "Hiscore: " + hiscore.ToString();
+        Debug.Log("Current hiscore: " + hiscore.ToString());
         SoundManager.instance.gameOver.Stop();
     	SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
@@ -94,7 +97,7 @@ public class GameControl : MonoBehaviour
         {
             hiscore = score;
             hiscoreText.text = "Hiscore: " + hiscore.ToString();
-            using(StreamWriter writetext = new StreamWriter("hiscore.txt"))
+            using(StreamWriter writetext = new StreamWriter(hiscorePath))
 			{
    			 writetext.WriteLine(hiscore.ToString());
 		}
