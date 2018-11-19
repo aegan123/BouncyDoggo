@@ -1154,17 +1154,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   basicSprite: {fileID: 21300000, guid: d44b3f6dd0242bd47b4ed6856dcb7feb, type: 3}
   powerupSprite: {fileID: 21300000, guid: ac7a5c04f662ea945b9daefb23597a05, type: 3}
-  bounceUpVelocity: 9
+  bounceUpVelocity: 7.5
   doubleJumpUpVelocity: 10
   tiltTime: 0.85
   powerupPizzaLimit: 5
   powerupDuration: 15
   animator: {fileID: 577009635}
-  basicJump: {fileID: 0}
-  doubleJump: {fileID: 0}
-  eatPizza: {fileID: 0}
-  eatChocolate: {fileID: 0}
-  destroyBox: {fileID: 0}
+  basicJump: {fileID: 8300000, guid: 61c7b2a9899ce42129dbf2a2ef440d79, type: 3}
+  doubleJump: {fileID: 8300000, guid: af31de26c35594bc2b50b49e30ce6e3b, type: 3}
+  eatPizza: {fileID: 8300000, guid: 689858bc1cbd8469f8332cdba832ea51, type: 3}
+  eatChocolate: {fileID: 8300000, guid: 4580a7eff72354d15832a06c4002ec28, type: 3}
+  destroyBox: {fileID: 8300000, guid: c695a4c7fba2a48a9bdf30803f39ce51, type: 3}
 --- !u!61 &577009634
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2374,8 +2374,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 61c7b2a9899ce42129dbf2a2ef440d79, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
