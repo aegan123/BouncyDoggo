@@ -106,12 +106,14 @@ public class Dog : MonoBehaviour
     // Called on touching colliders set as triggers
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if(!isDead){
         //Collision with crates
         if (collision.gameObject.name == "crate")
         {
             Debug.Log("Crate collision");
             if (powerupOn)
             {
+                SoundManager.instance.PlaySingle(destroyBox);
                 SpawnObjects.instance.DestroyCrate();
             }
             else
@@ -125,6 +127,7 @@ public class Dog : MonoBehaviour
             Debug.Log("Crate pile collision");
             if (powerupOn)
             {
+                SoundManager.instance.PlaySingle(destroyBox);
                 SpawnObjects.instance.DestroyCratePile();
             }
             else
@@ -145,17 +148,18 @@ public class Dog : MonoBehaviour
             SpawnObjects.instance.DestroyPizza();
             EatPizza();
         }
+        }
     }
 
     // Dying functionality
     private void Die()
     {
+    	isDead = true;
     	//Stops music when dead
     	SoundManager.instance.superMode.Stop();
         SoundManager.instance.backgroudMusic.Stop();
         //Plays gameover music
         SoundManager.instance.gameOver.Play();
-        isDead = true;
         Debug.Log("Player died");
         //Informs GameControl that game is over
         GameControl.instance.GameOver();
@@ -165,7 +169,8 @@ public class Dog : MonoBehaviour
     private void EatPizza()
     {
         Debug.Log(pizzaCount + " pizzas eaten");
-        GameControl.instance.AddPoint();
+        SoundManager.instance.PlaySingle(eatPizza);
+        GameControl.instance.AddPoint(10);
         //Activates powerup after 5 pizzas
         if (pizzaCount < powerupPizzaLimit - 1)
         {
