@@ -38,15 +38,12 @@ public class GameControl : MonoBehaviour
     //GameControl doesn't need to follow frame updates. Counts score for every second.
     void Update()
     {
-        score++;
-        scoreText.text = "Score: " + score.ToString();
-
         // adds points
 
         timer += Time.deltaTime;
         if (gameOver == false)
         {
-            if (timer > 5f)
+            if (timer > 1f)
             {
                 score += 1;
                 scoreText.text = "Score: " + score.ToString();
@@ -76,11 +73,11 @@ public class GameControl : MonoBehaviour
     }
 
     // Called by other scripts when the player scores a point
-    public void AddPoint()
+    public void AddPoint(int point)
     {
         if (gameOver == false)
         {
-            score++;
+            score+=point;
             scoreText.text = "Score: " + score.ToString();
         }
     }
@@ -112,7 +109,6 @@ public class GameControl : MonoBehaviour
     // Starts the game over - attached to Replay button
     public void Replay()
     {
-        //TODO: Save hiscore
         Debug.Log("Starting game over");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
