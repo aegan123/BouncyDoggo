@@ -2016,6 +2016,8 @@ MonoBehaviour:
     type: 2}
   theeCratesPrefab: {fileID: 1060876363260546, guid: 98ba30005fbd343ffbb09188b9f482d0,
     type: 2}
+  powerUpBoxPrefab: {fileID: 1738153457880608, guid: a3ccbb8bc9fde49f8a8858476c9d7301,
+    type: 2}
   rockPrefab: {fileID: 1060876363260546, guid: c8e55975cf97e754999118262deec86e, type: 2}
   rockMaxHeight: 3.5
   foodMinFrequency: 4
