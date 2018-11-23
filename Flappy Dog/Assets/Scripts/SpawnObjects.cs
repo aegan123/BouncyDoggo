@@ -24,16 +24,20 @@ public class SpawnObjects : MonoBehaviour
     //TODO
     public GameObject twoCratesPrefab;
     private GameObject twoCrates;
+
     public GameObject theeCratesPrefab;
     private GameObject threeCrates;
+
+    public GameObject powerUpBoxPrefab;
+    private GameObject powerUpBox;
 
     public GameObject rockPrefab;
     public float rockMaxHeight = 4;
     private GameObject rock;
 
     //TODO
-    //public GameObject catPrefab;
-    //private GameObject cat;
+    public GameObject catPrefab;
+    private GameObject cat;
 
     //Foods: pizzas, chocolate bars
     public float foodMinFrequency = 3;
@@ -46,8 +50,9 @@ public class SpawnObjects : MonoBehaviour
     private static bool canSpawnPizza;
 
     //TODO
-    //public GameObject chocolatePrefab;
-    //private GameObject chocolate;
+    public GameObject chocolatePrefab;
+    private GameObject chocolate;
+    private float difficultyTimer = 0;
 
 
     // Called on every start of game
@@ -70,13 +75,50 @@ public class SpawnObjects : MonoBehaviour
         canSpawnPizza = true;
     }
 
+/*
+	private void spawnEasy(){
+		if (nextObstacleCountdown >= nextObstacleInterval){
+			 float random = Random.Range(0, 11);
+                if (random <= 8) //80% single crates
+                {
+                    SpawnCrate(false);
+                }
+                else if(random>10)	//Special powerup box
+                {
+                	SpawnCrate(true);
+                }
+                else
+                {
+                    SpawnRock();
+                }
+		}
+		nextObstacleCountdown = 0;
+        nextObstacleInterval = Random.Range(obstacleMinFrequency, obstacleMaxFrequency);
+	}
+	private void spawnMedium(){
+	}
+	private void spawnHard(){
+	}
+*/
     // Called on every game frame
     private void Update()
     {
         nextObstacleCountdown += Time.deltaTime;
         nextFoodCountdown += Time.deltaTime;
+       // difficultyTimer += Time.deltaTime;
         if (GameControl.instance.gameOver == false)
         {
+        	/*
+        	if(difficultyTimer<30.0f){
+				spawnEasy();
+        	}
+        	else if(difficultyTimer<60.0f){
+        		spawnMedium();
+        		}
+        	else{
+        		spawnHard();
+        		}
+        		*/
             //Obstacle spawns
             if (nextObstacleCountdown >= nextObstacleInterval)
             {
@@ -84,7 +126,7 @@ public class SpawnObjects : MonoBehaviour
                 float random = Random.Range(0, 10);
                 if (random <= 5) //50% single crates
                 {
-                    SpawnCrate();
+                    SpawnCrate(false);
                 }
                 else if (random <= 7) //20% crate piles
                 {
@@ -121,11 +163,25 @@ public class SpawnObjects : MonoBehaviour
     }
 
     // Single crate functionality
-    private void SpawnCrate()
+    private void SpawnCrate(bool special)
     {
-        crate = (GameObject) Instantiate(cratePrefab, new Vector2(spawnDistance, 0), Quaternion.identity);
-        crate.gameObject.SetActive(true);
+    	if(special)
+    	{
+    		//TODO: put real object here
+    		crate = (GameObject) Instantiate(cratePrefab, new Vector2(spawnDistance, 0), Quaternion.identity);
+        	crate.gameObject.SetActive(true);
+    	}
+    	else{
+        	crate = (GameObject) Instantiate(cratePrefab, new Vector2(spawnDistance, 0), Quaternion.identity);
+        	crate.gameObject.SetActive(true);
+        	var p1 = crate.transform.TransformPoint(0, 0, 0);
+     		var p2 = crate.transform.TransformPoint(1, 1, 0);
+     		var w = p2.x - p1.x;
+     		var h = p2.y - p1.y;
+     		var x= crate.transform.TransformPoint(1, 1, 0).y - crate.transform.TransformPoint(0, 0, 0).y;
+     	}
     }
+
     public void DestroyCrate()
     {
         Destroy(crate);

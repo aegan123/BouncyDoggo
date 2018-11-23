@@ -36,7 +36,7 @@ public class Dog : MonoBehaviour
 
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
-    public static bool godMode=false;
+    public static bool godMode=true;
 
      IEnumerator Wait(){
         waitActive = true;
@@ -161,8 +161,6 @@ public class Dog : MonoBehaviour
     		return;
     	}
         if(!isDead){
-
-
         //Collision with crates
         if (collision.gameObject.name == "crate")
         {
