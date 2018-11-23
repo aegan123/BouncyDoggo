@@ -46,6 +46,10 @@ public class GameControl : MonoBehaviour
     //GameControl doesn't need to follow frame updates. Counts score for every second.
     void Update()
     {
+    	if(Dog.godMode)
+    	{
+    		return;
+    	}
         // adds points
 
         timer += Time.deltaTime;

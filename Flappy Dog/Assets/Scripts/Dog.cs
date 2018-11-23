@@ -33,7 +33,11 @@ public class Dog : MonoBehaviour
     public bool canSwitch = false;
     public bool waitActive = false;
     public bool waitActive2 = false;
-    
+
+    //for testing purposes only!!!
+    //When true the Dog doesn't collide with object and points are not counted.
+    public static bool godMode=false;
+
      IEnumerator Wait(){
         waitActive = true;
         yield return new WaitForSeconds (0.3f);
@@ -45,10 +49,10 @@ public class Dog : MonoBehaviour
     private void Waiter(){
         if(!waitActive){
             StartCoroutine(Wait());
-            
+
         }
-        
-        
+
+
     }
     // Called once on every gaming session before Start
     private void Awake()
@@ -74,13 +78,20 @@ public class Dog : MonoBehaviour
             }
             if (doubleJumpAvailable == true)
             {
-                if (Input.GetMouseButtonDown(0))
+            	//if(Input.GetKey("space")){
+            	if(Input.GetKey("up")){
+            		DoubleJump();
+                    Waiter();
+            	}
+
+                else if (Input.GetMouseButtonDown(0))
                 {
                     DoubleJump();
                     Waiter();
                     //animator.SetBool("Clicked", false);
                 }
-                if (Input.GetMouseButtonDown(1))
+                //if (Input.GetMouseButtonDown(1))
+                if(Input.GetKey("down"))
                 {
                     Dive();
                     Waiter();
@@ -145,7 +156,13 @@ public class Dog : MonoBehaviour
     // Called on touching colliders set as triggers
     private void OnTriggerEnter2D(Collider2D collision)
     {
+    	if(godMode){
+    		Destroy(collision.gameObject);
+    		return;
+    	}
         if(!isDead){
+
+
         //Collision with crates
         if (collision.gameObject.name == "crate")
         {
@@ -187,6 +204,7 @@ public class Dog : MonoBehaviour
             SpawnObjects.instance.DestroyPizza();
             EatPizza();
         }
+
         }
     }
 
