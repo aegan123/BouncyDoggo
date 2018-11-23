@@ -20,6 +20,7 @@ public class GameControl : MonoBehaviour
 
     private int score = 0;
     private int hiscore;
+    private float timer = 0;
 
 
     // Called once on every gaming session before Start
