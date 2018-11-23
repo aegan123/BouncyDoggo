@@ -1306,14 +1306,14 @@ MonoBehaviour:
   powerupPizzaLimit: 5
   powerupDuration: 15
   animator: {fileID: 577009635}
-  canSwitch: 0
-  waitActive: 0
-  waitActive2: 0
   basicJump: {fileID: 8300000, guid: 61c7b2a9899ce42129dbf2a2ef440d79, type: 3}
   doubleJump: {fileID: 8300000, guid: af31de26c35594bc2b50b49e30ce6e3b, type: 3}
   eatPizza: {fileID: 8300000, guid: 689858bc1cbd8469f8332cdba832ea51, type: 3}
   eatChocolate: {fileID: 8300000, guid: 4580a7eff72354d15832a06c4002ec28, type: 3}
   destroyBox: {fileID: 8300000, guid: c695a4c7fba2a48a9bdf30803f39ce51, type: 3}
+  canSwitch: 0
+  waitActive: 0
+  waitActive2: 0
 --- !u!61 &577009634
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2011,6 +2011,10 @@ MonoBehaviour:
   cratePrefab: {fileID: 1547364552648810, guid: fc4cdc83995546b46a13a7db81df444d,
     type: 2}
   cratePilePrefab: {fileID: 1893549479934558, guid: 50e83b491213a704f9b6365a5fa4d5cd,
+    type: 2}
+  twoCratesPrefab: {fileID: 1060876363260546, guid: d0eb26cc0262f43758d04eb735d8fdac,
+    type: 2}
+  theeCratesPrefab: {fileID: 1060876363260546, guid: 98ba30005fbd343ffbb09188b9f482d0,
     type: 2}
   rockPrefab: {fileID: 1060876363260546, guid: c8e55975cf97e754999118262deec86e, type: 2}
   rockMaxHeight: 3.5
