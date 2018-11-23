@@ -4,6 +4,7 @@
 // Controls all prefab object spawns
 public class SpawnObjects : MonoBehaviour
 {
+	private static System.Random rnd=new System.Random();
     public static SpawnObjects instance;
     public Transform mainCameraTransform;
     public float spawnDistance = 20;
@@ -19,6 +20,12 @@ public class SpawnObjects : MonoBehaviour
 
     public GameObject cratePilePrefab;
     private GameObject cratePile;
+
+    //TODO
+    public GameObject twoCratesPrefab;
+    private GameObject twoCrates;
+    public GameObject theeCratesPrefab;
+    private GameObject threeCrates;
 
     public GameObject rockPrefab;
     public float rockMaxHeight = 4;
@@ -147,7 +154,7 @@ public class SpawnObjects : MonoBehaviour
     // Pizza functionality
     private void SpawnPizza()
     {
-        pizza = (GameObject) Instantiate(pizzaPrefab, new Vector2(spawnDistance, 0), Quaternion.identity);
+    	pizza = (GameObject) Instantiate(pizzaPrefab, new Vector2(spawnDistance, rnd.Next(6)), Quaternion.identity);
         pizza.gameObject.SetActive(true);
     }
     public void DestroyPizza()
