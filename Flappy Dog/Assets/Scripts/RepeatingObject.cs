@@ -30,7 +30,6 @@ public class RepeatingObject : MonoBehaviour
         {
             Vector2 backgroundOffSet = new Vector2(objectLength * 2f, 0);
             transform.position = (Vector2) transform.position + backgroundOffSet;
-            Debug.Log("Repeated: " + this.name);
         }
     }
 }
