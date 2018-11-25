@@ -1,10 +1,9 @@
-﻿using UnityEngine;
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;﻿
 
 // Controls player's interactions
-public class Dog : MonoBehaviour
-{
+public class Dog : MonoBehaviour {
     //Public variables are configurable in Unity as well
     public Sprite basicSprite;
     public Sprite powerupSprite;
@@ -23,8 +22,8 @@ public class Dog : MonoBehaviour
     public AudioClip destroyBox;
 
     private Rigidbody2D playerBody;
-    private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
-    private Quaternion upRotation = Quaternion.Euler(0, 0, 45);
+    private Quaternion downRotation = Quaternion.Euler (0, 0, -45);
+    private Quaternion upRotation = Quaternion.Euler (0, 0, 45);
     private bool isDead = false;
     private bool doubleJumpAvailable = true;
     private bool powerupOn = false;
@@ -36,233 +35,199 @@ public class Dog : MonoBehaviour
 
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
-    public static bool godMode=true;
+    public static bool godMode = true;
 
-     IEnumerator Wait(){
+    IEnumerator Wait () {
         waitActive = true;
         yield return new WaitForSeconds (0.3f);
         canSwitch = true;
         waitActive = false;
-        animator.SetBool("jumped", false);
-        print("jump: false");
+        animator.SetBool ("jumped", false);
+        //print("jump: false");
     }
-    private void Waiter(){
-        if(!waitActive){
-            StartCoroutine(Wait());
+    private void Waiter () {
+        if (!waitActive) {
+            StartCoroutine (Wait ());
 
         }
 
-
     }
     // Called once on every gaming session before Start
-    private void Awake()
-    {
-        playerBody = GetComponent<Rigidbody2D>();
+    private void Awake () {
+        playerBody = GetComponent<Rigidbody2D> ();
     }
 
     // Called on every game frame
-    private void Update()
-    {
-        if (isDead == false)
-        {
-            playerBody.velocity = new Vector2(0, playerBody.velocity.y);
-            if (powerupOn == true)
-            {
+    private void Update () {
+        if (isDead == false) {
+            playerBody.velocity = new Vector2 (0, playerBody.velocity.y);
+            if (powerupOn == true) {
                 //Superball mode timer.
                 powerupDuration -= Time.deltaTime;
-                if (powerupDuration < 0)
-                {
-                    DeactivatePowerup();
+                if (powerupDuration < 0) {
+                    DeactivatePowerup ();
                     powerupDuration = 5.0f;
                 }
             }
-            if (doubleJumpAvailable == true)
-            {
-            	//if(Input.GetKey("space")){
-            	if(Input.GetKey("up")){
-            		DoubleJump();
-                    Waiter();
-            	}
-
-                else if (Input.GetMouseButtonDown(0))
-                {
-                    DoubleJump();
-                    Waiter();
+            if (doubleJumpAvailable == true) {
+                //if(Input.GetKey("space")){
+                if (Input.GetKey ("up")) {
+                    DoubleJump ();
+                    Waiter ();
+                } else if (Input.GetMouseButtonDown (0)) {
+                    DoubleJump ();
+                    Waiter ();
                     //animator.SetBool("Clicked", false);
                 }
                 //if (Input.GetMouseButtonDown(1))
-                if(Input.GetKey("down"))
-                {
-                    Dive();
-                    Waiter();
+                if (Input.GetKey ("down")) {
+                    Dive ();
+                    Waiter ();
                 }
             }
             //Adds downfall rotation
-            transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp (transform.rotation, downRotation, tiltTime * Time.deltaTime);
         }
     }
 
     // Double jump functionality
-    private void DoubleJump()
-    {
-    	SoundManager.instance.PlaySingle(doubleJump);
+    private void DoubleJump () {
+        SoundManager.instance.PlaySingle (doubleJump);
         transform.rotation = upRotation;
-        playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
+        playerBody.velocity = new Vector2 (0, doubleJumpUpVelocity);
         doubleJumpAvailable = false;
-        animator.SetBool("jumped", true);
-        print("jump = true");
+        animator.SetBool ("jumped", true);
+        //print("jump = true");
     }
 
     // Diving functionality
-    private void Dive()
-    {
-        SoundManager.instance.PlaySingle(doubleJump);
+    private void Dive () {
+        SoundManager.instance.PlaySingle (doubleJump);
         transform.rotation = downRotation;
-        playerBody.velocity = new Vector2(0, -doubleJumpUpVelocity);
+        playerBody.velocity = new Vector2 (0, -doubleJumpUpVelocity);
         doubleJumpAvailable = false;
-        animator.SetBool("jumped", true);
-        print("jump = true");
+        animator.SetBool ("jumped", true);
+        print ("jump = true");
     }
 
     // Called on touching normal colliders (colliders not set as triggers)
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (isDead == false)
-        {
-            if (powerupOn == false)
-            {
-                Bounce();
-                Waiter();
-            }
-            else
-            {
+    private void OnCollisionEnter2D (Collision2D collision) {
+        if (isDead == false) {
+            if (powerupOn == false) {
+                Bounce ();
+                Waiter ();
+            } else {
                 doubleJumpAvailable = true;
             }
         }
     }
 
     // Bounce functionality
-    private void Bounce()
-    {
-    	SoundManager.instance.PlaySingle(basicJump);
+    private void Bounce () {
+        SoundManager.instance.PlaySingle (basicJump);
         playerBody.angularVelocity = 0; //Prevents player's collider from rolling
         transform.rotation = upRotation;
-        playerBody.velocity = new Vector2(0, bounceUpVelocity);
+        playerBody.velocity = new Vector2 (0, bounceUpVelocity);
         doubleJumpAvailable = true;
-        animator.SetBool("jumped", true);
-        print("jump = true");
+        animator.SetBool ("jumped", true);
+        //print("jump = true");
     }
 
     // Called on touching colliders set as triggers
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-    	if(godMode){
-    		Destroy(collision.gameObject);
-    		return;
-    	}
-        if(!isDead){
-        //Collision with crates
-        if (collision.gameObject.name == "crate")
-        {
-            Debug.Log("Crate collision");
-            if (powerupOn)
-            {
-                SoundManager.instance.PlaySingle(destroyBox);
-                SpawnObjects.instance.DestroyCrate();
-            }
-            else
-            {
-                Die();
-            }
+    private void OnTriggerEnter2D (Collider2D collision) {
+        if (godMode) {
+            Destroy (collision.gameObject);
+            return;
         }
-        //Collision with crate piles
-        else if (collision.gameObject.tag == "cratepile")
-        {
-            Debug.Log("Crate pile collision");
-            if (powerupOn)
-            {
-                SoundManager.instance.PlaySingle(destroyBox);
-                SpawnObjects.instance.DestroyCratePile();
+        if (!isDead) {
+            //Collision with crates
+            if (collision.gameObject.tag == "Obstacle") {
+                // if (collision.gameObject.name == "crate") {
+                //Debug.Log("Crate collision");
+                if (powerupOn) {
+                    SoundManager.instance.PlaySingle (destroyBox);
+                    //Destroy (collision.gameObject);
+                    SpawnObjects.instance.DestroyCrate ();
+                } else {
+                    Die ();
+                }
             }
-            else
-            {
-                Die();
+            //Collision with crate piles
+            else if (collision.gameObject.tag == "cratepile") {
+                //Debug.Log("Crate pile collision");
+                if (powerupOn) {
+                    SoundManager.instance.PlaySingle (destroyBox);
+                    Destroy (collision.gameObject);
+                    //SpawnObjects.instance.DestroyCratePile ();
+                } else {
+                    Die ();
+                }
             }
-        }
-        //Collision with vertical rocks
-        else if (collision.gameObject.name == "rock")
-        {
-            Debug.Log("Rock collision");
-            Die();
-        }
-        //Collision with pizzas
-        else if (collision.gameObject.name == "pizza")
-        {
-            Debug.Log("Pizza collision");
-            SpawnObjects.instance.DestroyPizza();
-            EatPizza();
-        }
+            //Collision with vertical rocks
+            else if (collision.gameObject.name == "rock") {
+                //Debug.Log("Rock collision");
+                Die ();
+            }
+            //Collision with pizzas
+            else if (collision.gameObject.name == "pizza") {
+                //Debug.Log("Pizza collision");
+                SpawnObjects.instance.DestroyPizza ();
+                EatPizza ();
+            }
 
         }
     }
 
     // Dying functionality
-    private void Die()
-    {
-    	isDead = true;
-    	//Stops music when dead
-    	SoundManager.instance.superMode.Stop();
-        SoundManager.instance.backgroudMusic.Stop();
+    private void Die () {
+        isDead = true;
+        //Stops music when dead
+        SoundManager.instance.superMode.Stop ();
+        SoundManager.instance.backgroudMusic.Stop ();
         //Plays gameover music
-        SoundManager.instance.gameOver.Play();
-        Debug.Log("Player died");
+        SoundManager.instance.gameOver.Play ();
+        //Debug.Log("Player died");
         //Informs GameControl that game is over
-        GameControl.instance.GameOver();
+        GameControl.instance.GameOver ();
     }
 
     // Pizza functionality
-    private void EatPizza()
-    {
-        Debug.Log(pizzaCount + " pizzas eaten");
-        SoundManager.instance.PlaySingle(eatPizza);
-        GameControl.instance.AddPoint(10);
+    private void EatPizza () {
+        //Debug.Log(pizzaCount + " pizzas eaten");
+        SoundManager.instance.PlaySingle (eatPizza);
+        GameControl.instance.AddPoint (10);
         //Activates powerup after 5 pizzas
-        if (pizzaCount < powerupPizzaLimit - 1)
-        {
+        if (pizzaCount < powerupPizzaLimit - 1) {
             pizzaCount++;
-        }
-        else
-        {
+        } else {
             pizzaCount = 0;
-            ActivatePowerup();
+            ActivatePowerup ();
         }
     }
 
     // Powerup functionality
-    private void ActivatePowerup()
-    {
+    private void ActivatePowerup () {
         powerupOn = true;
-        Debug.Log("Powerup activated");
+        //Debug.Log("Powerup activated");
         //Prevents pizzas from spanwning while in superball mode.
-        SpawnObjects.SetCanSpawnPizza(false);
-        GetComponent<SpriteRenderer>().sprite = powerupSprite;
-        GetComponent<BoxCollider2D>().enabled = false;
-        GetComponent<CircleCollider2D>().enabled = true;
-        SoundManager.instance.backgroudMusic.Pause();
-		SoundManager.instance.superMode.Play();
+        SpawnObjects.SetCanSpawnFood (false);
+        GetComponent<SpriteRenderer> ().sprite = powerupSprite;
+        GetComponent<BoxCollider2D> ().enabled = false;
+        GetComponent<CircleCollider2D> ().enabled = true;
+        SoundManager.instance.backgroudMusic.Pause ();
+        SoundManager.instance.superMode.Play ();
     }
-    private void DeactivatePowerup()
-    {
+    private void DeactivatePowerup () {
         powerupOn = false;
-        Debug.Log("Powerup deactivated");
+        //Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
-        SpawnObjects.SetCanSpawnPizza(true);
-        GetComponent<SpriteRenderer>().sprite = basicSprite;
-        GetComponent<BoxCollider2D>().enabled = true;
-        GetComponent<CircleCollider2D>().enabled = false;
+        SpawnObjects.SetCanSpawnFood (true);
+        GetComponent<SpriteRenderer> ().sprite = basicSprite;
+        GetComponent<BoxCollider2D> ().enabled = true;
+        GetComponent<CircleCollider2D> ().enabled = false;
         //Stop supermode music and resume background music
-        SoundManager.instance.superMode.Stop();
-        SoundManager.instance.backgroudMusic.Play();
-        DoubleJump(); //Exit's rolling with a jump
+        SoundManager.instance.superMode.Stop ();
+        SoundManager.instance.backgroudMusic.Play ();
+        DoubleJump (); //Exit's rolling with a jump
     }
 }
