@@ -1390,7 +1390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 1, y: -30.47}
+  m_AnchoredPosition: {x: 1, y: -30.470001}
   m_SizeDelta: {x: 360.68, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &656230371
@@ -2005,7 +2005,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCameraTransform: {fileID: 519420032}
-  spawnDistance: 15
+  spawnDistance: 10
   obstacleMinFrequency: 3
   obstacleMaxFrequency: 4
   cratePrefab: {fileID: 1547364552648810, guid: fc4cdc83995546b46a13a7db81df444d,
@@ -2014,7 +2014,7 @@ MonoBehaviour:
     type: 2}
   twoCratesPrefab: {fileID: 1060876363260546, guid: d0eb26cc0262f43758d04eb735d8fdac,
     type: 2}
-  theeCratesPrefab: {fileID: 1060876363260546, guid: 98ba30005fbd343ffbb09188b9f482d0,
+  threeCratesPrefab: {fileID: 1060876363260546, guid: 98ba30005fbd343ffbb09188b9f482d0,
     type: 2}
   powerUpBoxPrefab: {fileID: 1738153457880608, guid: a3ccbb8bc9fde49f8a8858476c9d7301,
     type: 2}
@@ -2230,7 +2230,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1347719164}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.97, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 375879844}
