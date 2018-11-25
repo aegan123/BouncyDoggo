@@ -39,7 +39,6 @@ public class GameControl : MonoBehaviour
         if (!File.Exists(hiscorePath))
         {
             File.WriteAllText(hiscorePath, "0");
-            Debug.Log("Created hiscore.txt");
         }
     }
 
@@ -74,7 +73,6 @@ public class GameControl : MonoBehaviour
         score = 0;
         hiscore = Int32.Parse(File.ReadAllText(hiscorePath));
         hiscoreText.text = "Hiscore: " + hiscore.ToString();
-        Debug.Log("Current hiscore: " + hiscore.ToString());
         SoundManager.instance.gameOver.Stop();
     	SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
@@ -93,7 +91,6 @@ public class GameControl : MonoBehaviour
     // Called by other scripts if the player loses
     public void GameOver()
     {
-        Debug.Log("Game over");
         gameOver = true;
         if (score > hiscore)
         {
@@ -117,7 +114,6 @@ public class GameControl : MonoBehaviour
     // Starts the game over - attached to Replay button
     public void Replay()
     {
-        Debug.Log("Starting game over");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
