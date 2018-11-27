@@ -226,6 +226,7 @@ public class Dog : MonoBehaviour
     private void ActivatePowerup()
     {
         powerupOn = true;
+        animator.SetBool("powerupOn", true);
         Debug.Log("Powerup activated");
         //Prevents pizzas from spanwning while in superball mode.
         SpawnObjects.SetCanSpawnPizza(false);
@@ -238,6 +239,7 @@ public class Dog : MonoBehaviour
     private void DeactivatePowerup()
     {
         powerupOn = false;
+        animator.SetBool("powerupOn", false);
         Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
         SpawnObjects.SetCanSpawnPizza(true);
