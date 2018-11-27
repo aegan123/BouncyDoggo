@@ -14,6 +14,7 @@ public class GameControl : MonoBehaviour
     public Text hiscoreText;
     public GameObject gameOverText;
     public GameObject tryAgainText;
+    public GameObject GameOverPanel;
     public Button playButton;
     public String hiscorePath = "hiscore.txt";
     public bool gameOver;
@@ -107,6 +108,9 @@ public class GameControl : MonoBehaviour
 
         //shows Try again? text
         tryAgainText.gameObject.SetActive(true);
+
+        //shows GameOverPanel
+        GameOverPanel.gameObject.SetActive(true);
 
     }
 
