@@ -4,9 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Obstacle
-  - Powerup
-  - cratepile
+  - Crate
   layers:
   - Default
   - TransparentFX

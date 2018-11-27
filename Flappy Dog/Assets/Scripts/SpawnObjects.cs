@@ -2,45 +2,47 @@
 
 // Controls all prefab object spawns
 public class SpawnObjects : MonoBehaviour {
-    private static System.Random rnd = new System.Random ();
+
     public static SpawnObjects instance;
     public Transform mainCameraTransform;
-    public float spawnDistance = 20;
+    private static System.Random rnd = new System.Random();
 
-    //Obstacles: obstacles, rocks, cats
-    public float obstacleMinFrequency = 2;
-    public float obstacleMaxFrequency = 7;
-    private float nextObstacleInterval;
-    private float nextObstacleCountdown;
+    // Public variables (configurable in Unity)
     public GameObject cratePrefab;
     public GameObject cratePilePrefab;
     public GameObject twoCratesPrefab;
     public GameObject threeCratesPrefab;
     public GameObject powerUpBoxPrefab;
     public GameObject rockPrefab;
-    public float rockMaxHeight = 4;
     public GameObject catPrefab;
-
-    // All gameobjects are stored into these during runtime
-    private GameObject[] obstacles;
-    private GameObject[] doubleObstacles;
-    private int currentObstacle = 0;
-    private int currentDoubleObstacle = 0;
-
-    //Foods: pizzas, chocolate bars
+    public GameObject pizzaPrefab;
+    public GameObject chocolatePrefab;
+    public float spawnDistance = 20;
+    public float obstacleMinFrequency = 2;
+    public float obstacleMaxFrequency = 7;
+    public float rockMaxHeight = 4;
     public float foodMinFrequency = 3;
     public float foodMaxFrequency = 7;
+    public int obstaclePoolSize = 5;
+    public int doubleObstaclePoolSize = 5;
+    public int foodPoolSize = 10;
+    
+    // Prefab variables
+    private GameObject[] obstacles;
+    private GameObject[] doubleObstacles;
+    private GameObject[] foods;
+    private int currentObstacle = 0;
+    private int currentDoubleObstacle = 0;
+    private int currentFood = 0;
+    private float nextObstacleInterval;
+    private float nextObstacleCountdown;
     private float nextFoodInterval;
     private float nextFoodCountdown;
 
-    public GameObject pizzaPrefab;
-    private GameObject pizza;
+    // Other variables
     private static bool foodAllowedToSpawn;
-
-    public GameObject chocolatePrefab;
-    private GameObject chocolate;
-    // Others
     private float difficultyTimer = 0;
+
 
     // Called on every start of game
     private void Start () {
@@ -57,12 +59,14 @@ public class SpawnObjects : MonoBehaviour {
         nextObstacleCountdown = 0;
         nextObstacleInterval = (float) rnd.Next ((int) obstacleMinFrequency, (int) obstacleMaxFrequency);
         nextFoodCountdown = 0;
-        nextFoodInterval = (float) rnd.Next ((int) foodMinFrequency, (int) foodMaxFrequency);
+        nextFoodInterval = (float)rnd.Next((int)foodMinFrequency, (int)foodMaxFrequency);
         foodAllowedToSpawn = true;
         //testing
-        obstacles = new GameObject[50];
-        doubleObstacles = new GameObject[10];
+        obstacles = new GameObject[obstaclePoolSize];
+        doubleObstacles = new GameObject[doubleObstaclePoolSize];
+        foods = new GameObject[foodPoolSize];
     }
+
     // Called on every game frame
     private void Update () {
         nextObstacleCountdown += Time.deltaTime;
@@ -82,7 +86,7 @@ public class SpawnObjects : MonoBehaviour {
 
     private void spawnEasy () {
         //Spawn obstacles
-        if (canSpwanObstacle ()) {
+        if (CanSpwanObstacle ()) {
             // if (currentObstacle < 5) {
             bool doubleObstacle = false;
             int random = rnd.Next (12);
@@ -114,25 +118,34 @@ public class SpawnObjects : MonoBehaviour {
             if (currentDoubleObstacle >= doubleObstacles.Length - 1) {
                 currentDoubleObstacle = 0;
             }
+            
         }
-
         //Food spawns
-        if (canSpawnFood ()) {
+        if (CanSpawnFood())
+        {
             //Determines which food to spawn by random
-            float random = rnd.Next (0, 3);
+            float random = rnd.Next(0, 3);
             if (foodAllowedToSpawn && random <= 2) //66% pizzas
             {
-                SpawnPizza ();
-            } else {
-                SpawnChocolate ();
+                SpawnPizza();
             }
-
+            else
+            {
+                SpawnChocolate();
+            }
+            currentFood++;
+            // Reset back to the beginning of the array.
+            if (currentFood >= foods.Length - 1)
+            {
+                currentFood = 0;
+            }
         }
     }
+
     private void spawnMedium () {
         obstacleMaxFrequency = 4;
         //Spawn obstacles
-        if (canSpwanObstacle ()) {
+        if (CanSpwanObstacle ()) {
             bool doubleObstacle = false;
             int random = rnd.Next (0, 12);
             if (random <= 5) //50% single obstacles
@@ -178,16 +191,24 @@ public class SpawnObjects : MonoBehaviour {
             }
         }
         //Food spawns
-        if (canSpawnFood ()) {
+        if (CanSpawnFood())
+        {
             //Determines which food to spawn by random
-            //float random = rnd.Next (0, 3);
-            if (foodAllowedToSpawn && rnd.Next (3) < 2) //66% pizzas
+            float random = rnd.Next(0, 3);
+            if (foodAllowedToSpawn && random <= 2) //66% pizzas
             {
-                SpawnPizza ();
-            } else {
-                SpawnChocolate ();
+                SpawnPizza();
             }
-
+            else
+            {
+                SpawnChocolate();
+            }
+            currentFood++;
+            // Reset back to the beginning of the array.
+            if (currentFood >= foods.Length - 1)
+            {
+                currentFood = 0;
+            }
         }
 
     }
@@ -195,7 +216,7 @@ public class SpawnObjects : MonoBehaviour {
     private void spawnHard () {
         obstacleMaxFrequency = 3;
         //spawn obstacle
-        if (canSpwanObstacle ()) {
+        if (CanSpwanObstacle ()) {
             bool doubleObstacle = false;
             int random = rnd.Next (12);
             if (random <= 2) {
@@ -242,16 +263,24 @@ public class SpawnObjects : MonoBehaviour {
                 currentDoubleObstacle = 0;
             }
         }
-
         //Food spawns
-        if (canSpawnFood ()) {
+        if (CanSpawnFood())
+        {
             //Determines which food to spawn by random
-            //float random = rnd.Next (0, 3);
-            if (foodAllowedToSpawn && rnd.Next (0, 3) <= 2) //66% pizzas
+            float random = rnd.Next(0, 3);
+            if (foodAllowedToSpawn && random <= 2) //66% pizzas
             {
-                SpawnPizza ();
-            } else {
-                SpawnChocolate ();
+                SpawnPizza();
+            }
+            else
+            {
+                SpawnChocolate();
+            }
+            currentFood++;
+            // Reset back to the beginning of the array.
+            if (currentFood >= foods.Length - 1)
+            {
+                currentFood = 0;
             }
         }
     }
@@ -268,8 +297,9 @@ public class SpawnObjects : MonoBehaviour {
     // params: special: spawns powerup box
     //params: tupla: spawn a box as part of a double obstacle
     private void SpawnCrate (bool special, bool tupla) {
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (special) {
-            obstacles[currentObstacle] = (GameObject) Instantiate (powerUpBoxPrefab, new Vector2 (spawnDistance, -0.5f), Quaternion.identity);
+            obstacles[currentObstacle] = (GameObject) Instantiate (powerUpBoxPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
             if (!tupla) {
                 obstacles[currentObstacle] = (GameObject) Instantiate (cratePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
@@ -282,6 +312,7 @@ public class SpawnObjects : MonoBehaviour {
     // Crate pile
     // Param: tupla: spawn the pile as part of a double obstacle
     private void SpawnCratePile (bool tupla) {
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (!tupla) {
             obstacles[currentObstacle] = (GameObject) Instantiate (cratePilePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
@@ -291,12 +322,14 @@ public class SpawnObjects : MonoBehaviour {
 
     // Two obstacles on top of each other
     private void SpawnDoubleCrate () {
-        obstacles[currentObstacle] = (GameObject) Instantiate (twoCratesPrefab, new Vector2 (spawnDistance, -2), Quaternion.identity);
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        obstacles[currentObstacle] = (GameObject) Instantiate (twoCratesPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
     }
 
     // Three obstacles on top of each other
     private void SpawnTripleCrate () {
-        doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (threeCratesPrefab, new Vector2 (spawnDistance + spawnDistance / 2, 5), Quaternion.identity);
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (threeCratesPrefab, new Vector2 (spawnDistance + spawnDistance / 2, 0), Quaternion.identity);
     }
 
     // Rock spawning
@@ -304,6 +337,7 @@ public class SpawnObjects : MonoBehaviour {
     // Params: pile rock is part of a double obstacle with crate pile
     // Params: height: height placement of rock in a double obstacle
     private void SpawnRock (bool tupla, bool pile, int height) {
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (tupla) {
             if (!pile) {
                 doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (rockPrefab, new Vector2 (spawnDistance + spawnDistance / 2, rockMaxHeight / height), Quaternion.identity);
@@ -315,97 +349,61 @@ public class SpawnObjects : MonoBehaviour {
         }
     }
 
-    // Spawns the selected double obstacle type.
-    // params: 1 == single box + rock, 2 == sigle box with cat on top
-    // params: 3 == create pile followed by a rock, 4 == one box followed by three boxes
-    private void SpawnDoubleObstacle (int choice) {
-        switch (choice) {
-            case (1):
-                SpawnCrate (false, true);
-                currentDoubleObstacle++;
-                SpawnRock (true, false, 3);
-                break;
-            case (2):
-                SpawnCrate (false, true);
-                currentDoubleObstacle++;
-                spawnCat (true, doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint (1, 1, 0).y - doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint (0, 0, 0).y);
-                break;
-            case (3):
-                SpawnCratePile (true);
-                currentDoubleObstacle++;
-                SpawnRock (true, true, 2);
-                break;
-            case (4):
-                SpawnCrate (false, true);
-                currentDoubleObstacle++;
-                SpawnTripleCrate ();
-                break;
-        }
-        currentDoubleObstacle++;
-    }
     // Cat spawning
     // Param: tupla: cat is part of a double obstacle
     // param: height: height where to spawn. 0==ground, else is on top of a crate.
     private void spawnCat (bool tupla, float height) {
+        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (tupla) {
             doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, height + 0.95f), Quaternion.identity);
         } else {
             obstacles[currentObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         }
     }
+
+    // Spawns the selected double obstacle type.
+    // params: 1 == single box + rock, 2 == sigle box with cat on top
+    // params: 3 == create pile followed by a rock, 4 == one box followed by three boxes
+    private void SpawnDoubleObstacle(int choice)
+    {
+        switch (choice)
+        {
+            case (1):
+                SpawnCrate(false, true);
+                currentDoubleObstacle++;
+                SpawnRock(true, false, 3);
+                break;
+            case (2):
+                SpawnCrate(false, true);
+                currentDoubleObstacle++;
+                spawnCat(true, doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(1, 1, 0).y - doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(0, 0, 0).y);
+                break;
+            case (3):
+                SpawnCratePile(true);
+                currentDoubleObstacle++;
+                SpawnRock(true, true, 2);
+                break;
+            case (4):
+                SpawnCrate(false, true);
+                currentDoubleObstacle++;
+                SpawnTripleCrate();
+                break;
+        }
+        currentDoubleObstacle++;
+    }
+
     // Pizza spawning
     private void SpawnPizza () {
-        pizza = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
-        pizza.gameObject.SetActive (true);
+        Destroy(foods[currentFood]); //(TEST) Ensures the deletion of the earlier food
+        foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
 
     // Chocolate spawning
     private void SpawnChocolate () {
-        chocolate = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
-        chocolate.gameObject.SetActive (true);
+        Destroy(foods[currentFood]); //(TEST) Ensures the deletion of the earlier food
+        foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
 
-    //MIGHT NOT NEED(see line 139 in Dog.cs)
-
-    //***********
-    //Destroying*
-    //***********
-
-    // Destroys a crate on collision.
-    public void DestroyCrate () {
-        Destroy (obstacles[currentObstacle]);
-        //Destroy(crate);
-        //TODO: destroying animation
-    }
-
-    // Destroys a cratepile on collision.
-    public void DestroyCratePile () {
-        //Destroy (cratePile);
-        //TODO: destroying animation
-    }
-
-    // Destroys a crate on collision.
-    public void DestroyDoubleCrate () {
-        //Destroy (twoobstacles);
-        //TODO: destroying animation
-    }
-
-    // Destroys a crate on collision.
-    public void DestroyTripleCrate () {
-        //Destroy (threeobstacles);
-        //TODO: destroying animation
-    }
-
-    // Destroys pizza on collision.
-    public void DestroyPizza () {
-        Destroy (pizza);
-        //TODO: Eating sound
-    }
-    // Destroys chocolate on collision.
-    public void DestroyChocolate () {
-        Destroy (chocolate);
-        //TODO: Eating sound
-    }
 
     //****************************
     //Additional helper functions*
@@ -419,7 +417,7 @@ public class SpawnObjects : MonoBehaviour {
 
     //Checks if obstacle is allowed to spawn.
     //If it is allowed, resets counters.
-    private bool canSpwanObstacle () {
+    private bool CanSpwanObstacle () {
         if (nextObstacleCountdown >= nextObstacleInterval) {
             nextObstacleCountdown = 0;
             nextObstacleInterval = (float) rnd.Next ((int) obstacleMinFrequency, (int) obstacleMaxFrequency);
@@ -430,7 +428,7 @@ public class SpawnObjects : MonoBehaviour {
 
     //Checks if food is allowed to spawn.
     //If it is allowed, resets counters.
-    private bool canSpawnFood () {
+    private bool CanSpawnFood () {
         if (nextFoodCountdown >= nextFoodInterval) {
             nextFoodCountdown = 0;
             nextFoodInterval = (float) rnd.Next ((int) foodMinFrequency, (int) foodMaxFrequency);
