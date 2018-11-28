@@ -6,6 +6,7 @@ public class RepeatingObject : MonoBehaviour
 {
     public float fixedObjectLength; //Use this if the collider is wrong sized compared to the object
     private BoxCollider2D objectCollider;
+    private Vector2 backgroundOffSet;
     private float objectLength;
 
 
@@ -21,16 +22,17 @@ public class RepeatingObject : MonoBehaviour
         {
             objectLength = objectCollider.size.x;
         }
+
+        backgroundOffSet = new Vector2(objectLength * 2f, 0);
     }
 
     // Called on every game frame
     private void Update()
     {
-        if (transform.position.x + objectLength < 0)
+        float playerXPosition = Dog.instance.transform.position.x; //Apply dog's position (dog keeps falling behind x=0)
+        if (transform.position.x + objectLength - playerXPosition < 0)
         {
-            Vector2 backgroundOffSet = new Vector2(objectLength * 2f, 0);
-            transform.position = (Vector2) transform.position + backgroundOffSet;
-            Debug.Log("Repeated: " + this.name);
+            transform.position = (Vector2)transform.position + backgroundOffSet;
         }
     }
 }
