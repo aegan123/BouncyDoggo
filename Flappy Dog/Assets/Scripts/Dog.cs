@@ -14,6 +14,8 @@ public class Dog : MonoBehaviour {
     public float doubleJumpUpVelocity = 6;
     public float tiltTime = 1;
     public float powerupDuration = 15.0f;
+    public float powerupColliderRadius = 1.5f;
+    public float baseColliderRadius = 1;
     public int powerupFoodLimit = 5;
 
     // Other variables
@@ -230,7 +232,7 @@ public class Dog : MonoBehaviour {
         //Prevents pizzas from spanwning while in superball mode.
         SpawnObjects.SetCanSpawnFood (false);
         GetComponent<SpriteRenderer> ().sprite = powerupSprite;
-        GetComponent<CircleCollider2D> ().radius = 1.45f;
+        GetComponent<CircleCollider2D> ().radius = powerupColliderRadius;
         SoundManager.instance.backgroudMusic.Pause ();
         SoundManager.instance.superMode.Play ();
     }
@@ -241,7 +243,7 @@ public class Dog : MonoBehaviour {
         //Pizzas can spawn again.
         SpawnObjects.SetCanSpawnFood (true);
         GetComponent<SpriteRenderer> ().sprite = basicSprite;
-        GetComponent<CircleCollider2D>().radius = 1;
+        GetComponent<CircleCollider2D>().radius = baseColliderRadius;
         //Stop supermode music and resume background music
         SoundManager.instance.superMode.Stop ();
         SoundManager.instance.backgroudMusic.Play ();
