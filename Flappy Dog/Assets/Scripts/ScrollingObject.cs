@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 
-// Scrolls objects towards player
+// Scrolls objects towards player & handles falling objects
 public class ScrollingObject : MonoBehaviour
 {
-    public float scrollingSpeed = 6;
+    public float scrollingSpeed = 7;
     private Rigidbody2D objectBody;
 
 
@@ -17,7 +17,7 @@ public class ScrollingObject : MonoBehaviour
     // Called on every start of game
     private void Start()
     {
-        objectBody.velocity = new Vector2(-scrollingSpeed, 0);
+        objectBody.velocity = new Vector2(-scrollingSpeed, objectBody.velocity.y);
     }
 
     // Called on every game frame
@@ -26,7 +26,7 @@ public class ScrollingObject : MonoBehaviour
         //Stops background scrolling if the game ends
         if (GameControl.instance.gameOver == true)
         {
-            objectBody.velocity = Vector2.zero;
+            objectBody.velocity = new Vector2(0, objectBody.velocity.y);
         }
     }
 }

@@ -228,7 +228,7 @@ public class Dog : MonoBehaviour {
         powerupTimer = powerupDuration;
         powerupOn = true;
         animator.SetBool("powerupOn", true);
-        Debug.Log("Powerup activated");
+        //Debug.Log("Powerup activated");
         //Prevents pizzas from spanwning while in superball mode.
         SpawnObjects.SetCanSpawnFood (false);
         GetComponent<SpriteRenderer> ().sprite = powerupSprite;
@@ -239,7 +239,7 @@ public class Dog : MonoBehaviour {
     private void DeactivatePowerup () {
         powerupOn = false;
         animator.SetBool("powerupOn", false);
-        Debug.Log("Powerup deactivated");
+        //Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
         SpawnObjects.SetCanSpawnFood (true);
         GetComponent<SpriteRenderer> ().sprite = basicSprite;

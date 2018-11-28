@@ -297,7 +297,7 @@ public class SpawnObjects : MonoBehaviour {
     // params: special: spawns powerup box
     //params: tupla: spawn a box as part of a double obstacle
     private void SpawnCrate (bool special, bool tupla) {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        Destroy(obstacles[currentObstacle]);
         if (special) {
             obstacles[currentObstacle] = (GameObject) Instantiate (powerUpBoxPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
@@ -312,7 +312,7 @@ public class SpawnObjects : MonoBehaviour {
     // Crate pile
     // Param: tupla: spawn the pile as part of a double obstacle
     private void SpawnCratePile (bool tupla) {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        Destroy(obstacles[currentObstacle]);
         if (!tupla) {
             obstacles[currentObstacle] = (GameObject) Instantiate (cratePilePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
@@ -322,13 +322,13 @@ public class SpawnObjects : MonoBehaviour {
 
     // Two obstacles on top of each other
     private void SpawnDoubleCrate () {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        Destroy(obstacles[currentObstacle]);
         obstacles[currentObstacle] = (GameObject) Instantiate (twoCratesPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
     }
 
     // Three obstacles on top of each other
     private void SpawnTripleCrate () {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        Destroy(obstacles[currentObstacle]);
         doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (threeCratesPrefab, new Vector2 (spawnDistance + spawnDistance / 2, 0), Quaternion.identity);
     }
 
@@ -394,13 +394,13 @@ public class SpawnObjects : MonoBehaviour {
 
     // Pizza spawning
     private void SpawnPizza () {
-        Destroy(foods[currentFood]); //(TEST) Ensures the deletion of the earlier food
+        Destroy(foods[currentFood]);
         foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
 
     // Chocolate spawning
     private void SpawnChocolate () {
-        Destroy(foods[currentFood]); //(TEST) Ensures the deletion of the earlier food
+        Destroy(foods[currentFood]);
         foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
 
