@@ -17,16 +17,19 @@ public class Dog : MonoBehaviour {
     public float powerupColliderRadius = 1.5f;
     public float baseColliderRadius = 1;
     public int powerupFoodLimit = 5;
+    public int doubleJumpLimit = 2; //How many jumps available in air
+    public int powerupJumpLimit = 1; //How many times can jump in rolling ball mode
 
     // Other variables
     private Rigidbody2D playerBody;
     private Quaternion downRotation = Quaternion.Euler (0, 0, -45);
     private Quaternion upRotation = Quaternion.Euler (0, 0, 45);
     private bool isDead = false;
-    private bool doubleJumpAvailable = true;
     private bool diveAvailable = false;
     private bool powerupOn = false;
     private float powerupTimer;
+    private int doubleJumpCount = 0;
+    private int powerupJumpCount = 0;
     private int foodCount = 0;
 
     // Animation variables
@@ -77,7 +80,7 @@ public class Dog : MonoBehaviour {
             playerBody.velocity = new Vector2 (0, playerBody.velocity.y);
             if (powerupOn) {
                 //Double jump always available once per bounce
-                if (doubleJumpAvailable)
+                if (powerupJumpCount < powerupJumpLimit)
                 {
                     if (Input.GetMouseButtonDown(0) || Input.GetKeyDown("up"))
                     {
@@ -94,7 +97,7 @@ public class Dog : MonoBehaviour {
             else
             {
                 //Double jump always available once per bounce
-                if (doubleJumpAvailable)
+                if (doubleJumpCount < doubleJumpLimit)
                 {
                     if (Input.GetMouseButtonDown(0) || Input.GetKeyDown("up"))
                     {
@@ -124,12 +127,14 @@ public class Dog : MonoBehaviour {
         {
             if (powerupOn)
             {
-                doubleJumpAvailable = true; //Enables jumping when powerup is on even without bouncing
+                powerupJumpCount = 0;
             }
             else
             {
                 Bounce();
+                doubleJumpCount = 0;
             }
+            diveAvailable = true;
         }
     }
 
@@ -155,8 +160,20 @@ public class Dog : MonoBehaviour {
             }
             //Collision with pizzas
             else if (collision.gameObject.name.Contains("pizza")) {
-                EatFood (1);
+                EatFood (1); //Pizzas food value = 1
                 Destroy(collision.gameObject);
+            }
+            //Collision with chocolates
+            else if (collision.gameObject.name.Contains("chocolate"))
+            {
+                EatBadfood(1); //Chocolate poison value = 1
+                Destroy(collision.gameObject);
+            }
+            //Collision with boxes
+            else if (collision.gameObject.name.Contains("box"))
+            {
+                Destroy(collision.gameObject);
+                SoundManager.instance.PlaySingle(destroyBox);
             }
         }
     }
@@ -165,13 +182,17 @@ public class Dog : MonoBehaviour {
     private void DoubleJump()
     {
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
-        doubleJumpAvailable = false;
-        if (!powerupOn)
+        if (powerupOn)
+        {
+            powerupJumpCount++;
+        }
+        else
         {
             Waiter();
             animator.SetBool("jumped", true);
-            transform.rotation = upRotation;
+            doubleJumpCount++;
         }
+        transform.rotation = upRotation;
         SoundManager.instance.PlaySingle(doubleJump);
     }
 
@@ -191,8 +212,6 @@ public class Dog : MonoBehaviour {
     {
         playerBody.angularVelocity = 0; //Prevents player's collider from rolling
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
-        doubleJumpAvailable = true;
-        diveAvailable = true;
         Waiter();
         animator.SetBool("jumped", true);
         transform.rotation = upRotation;
@@ -223,6 +242,25 @@ public class Dog : MonoBehaviour {
         }
     }
 
+    // Poison functionality
+    private void EatBadfood(int poisonValue)
+    {
+        SoundManager.instance.PlaySingle(destroyBox);
+        foodCount -= poisonValue;
+        if (foodCount < 0)
+        {
+            if (powerupOn)
+            {
+                foodCount = 0;
+                DeactivatePowerup();
+            }
+            else
+            {
+                Die();
+            }
+        }
+    }
+
     // Powerup functionality
     private void ActivatePowerup () {
         powerupTimer = powerupDuration;
@@ -237,7 +275,6 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.superMode.Play ();
     }
     private void DeactivatePowerup () {
-        powerupOn = false;
         animator.SetBool("powerupOn", false);
         //Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
@@ -247,6 +284,8 @@ public class Dog : MonoBehaviour {
         //Stop supermode music and resume background music
         SoundManager.instance.superMode.Stop ();
         SoundManager.instance.backgroudMusic.Play ();
+        doubleJumpCount = 0;
         Bounce (); //Exit's rolling with a bounce
+        powerupOn = false; //TODO: This only after certain safe time?
     }
 }
