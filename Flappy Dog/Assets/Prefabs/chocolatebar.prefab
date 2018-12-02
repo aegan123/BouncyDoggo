@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 50643544410736762}
   - component: {fileID: 114461381437178420}
   m_Layer: 0
-  m_Name: Chocolatebar
+  m_Name: chocolatebar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

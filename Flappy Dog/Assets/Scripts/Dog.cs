@@ -19,6 +19,7 @@ public class Dog : MonoBehaviour {
     public int powerupFoodLimit = 5;
     public int doubleJumpLimit = 2; //How many jumps available in air
     public int powerupJumpLimit = 1; //How many times can jump in rolling ball mode
+    public int maxDistance = 5; // max distance to obstacle to continue superball mode to avoid instant death
 
     // Other variables
     private Rigidbody2D playerBody;
@@ -47,7 +48,6 @@ public class Dog : MonoBehaviour {
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
     public static bool godMode = false;
-
 
     // Animation waiter
     IEnumerator Wait () {
@@ -90,6 +90,10 @@ public class Dog : MonoBehaviour {
                 }
                 //Powerup timer
                 powerupTimer -= Time.deltaTime;
+                // If obstacle is too close, extend timer to avoid instant death.
+                if (isObstacleTooClose ()) {
+                    powerupTimer += Time.deltaTime;
+                }
                 if (powerupTimer < 0) {
                     DeactivatePowerup ();
                 }
@@ -235,6 +239,7 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.PlaySingle (eatPizza);
         GameControl.instance.AddPoint (10);
         foodCount += foodValue;
+        GameControl.instance.eatFood(foodCount);
         if (foodCount >= powerupFoodLimit)
         {
             ActivatePowerup();
@@ -247,6 +252,7 @@ public class Dog : MonoBehaviour {
     {
         SoundManager.instance.PlaySingle(destroyBox);
         foodCount -= poisonValue;
+        GameControl.instance.eatFood (foodCount);
         if (foodCount < 0)
         {
             if (powerupOn)
@@ -287,5 +293,18 @@ public class Dog : MonoBehaviour {
         doubleJumpCount = 0;
         Bounce (); //Exit's rolling with a bounce
         powerupOn = false; //TODO: This only after certain safe time?
+        GameControl.instance.eatFood(0);
+    }
+
+    // Called by other scripts.
+    public bool isPowerUpOn () {
+        return powerupOn;
+    }
+
+    // Calculates the distance to the next obstacle.
+    private bool isObstacleTooClose () {
+        var distance = Vector2.Distance (GameObject.FindWithTag ("Player").transform.position, SpawnObjects.instance.getCurrentObstacle ().transform.position);
+        //Debug.Log ("Distance to obstacle: " + distance);
+        return distance < maxDistance;
     }
 }

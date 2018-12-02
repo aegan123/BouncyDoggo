@@ -26,7 +26,7 @@ public class SpawnObjects : MonoBehaviour {
     public int obstaclePoolSize = 5;
     public int doubleObstaclePoolSize = 5;
     public int foodPoolSize = 10;
-    
+
     // Prefab variables
     private GameObject[] obstacles;
     private GameObject[] doubleObstacles;
@@ -42,7 +42,7 @@ public class SpawnObjects : MonoBehaviour {
     // Other variables
     private static bool foodAllowedToSpawn;
     private float difficultyTimer = 0;
-
+    private bool doubleObstacle = false;
 
     // Called on every start of game
     private void Start () {
@@ -61,7 +61,6 @@ public class SpawnObjects : MonoBehaviour {
         nextFoodCountdown = 0;
         nextFoodInterval = (float)rnd.Next((int)foodMinFrequency, (int)foodMaxFrequency);
         foodAllowedToSpawn = true;
-        //testing
         obstacles = new GameObject[obstaclePoolSize];
         doubleObstacles = new GameObject[doubleObstaclePoolSize];
         foods = new GameObject[foodPoolSize];
@@ -87,16 +86,14 @@ public class SpawnObjects : MonoBehaviour {
     private void spawnEasy () {
         //Spawn obstacles
         if (CanSpwanObstacle ()) {
-            // if (currentObstacle < 5) {
-            bool doubleObstacle = false;
             int random = rnd.Next (12);
             if (random <= 6) //80% single obstacles
-            {
+           {
                 SpawnCrate (false, false);
             } else if (random <= 8) {
                 SpawnRock (false, false, 0);
-            } else if (random > 10) //Special powerup box
-            {
+            } else if (!Dog.instance.isPowerUpOn() && random > 10) //Special powerup box. Not while in superball mode.
+           {
                 SpawnCrate (true, false);
             } else { // box with rock right after
                 nextObstacleCountdown = -5;
@@ -106,10 +103,10 @@ public class SpawnObjects : MonoBehaviour {
             if (doubleObstacle) {
                 doubleObstacles[currentDoubleObstacle - 2].gameObject.SetActive (true);
                 doubleObstacles[currentDoubleObstacle - 1].gameObject.SetActive (true);
+                doubleObstacle = false;
             } else {
                 obstacles[currentObstacle].gameObject.SetActive (true);
             }
-            //}
             currentObstacle++;
             // Reset back to the beginning of the array.
             if (currentObstacle >= obstacles.Length - 1) {
@@ -118,15 +115,14 @@ public class SpawnObjects : MonoBehaviour {
             if (currentDoubleObstacle >= doubleObstacles.Length - 1) {
                 currentDoubleObstacle = 0;
             }
-            
+
         }
         //Food spawns
-        if (CanSpawnFood())
-        {
+        if(foodAllowedToSpawn && CanSpawnFood()){
             //Determines which food to spawn by random
             float random = rnd.Next(0, 3);
-            if (foodAllowedToSpawn && random <= 2) //66% pizzas
-            {
+            if(random <= 2) //66% pizzas
+           {
                 SpawnPizza();
             }
             else
@@ -146,10 +142,9 @@ public class SpawnObjects : MonoBehaviour {
         obstacleMaxFrequency = 4;
         //Spawn obstacles
         if (CanSpwanObstacle ()) {
-            bool doubleObstacle = false;
             int random = rnd.Next (0, 12);
             if (random <= 5) //50% single obstacles
-            {
+           {
                 if (rnd.Next (3) == 1) { //spawn a cat on top of crate
                     doubleObstacle = true;
                     SpawnDoubleObstacle (2);
@@ -169,8 +164,8 @@ public class SpawnObjects : MonoBehaviour {
                 } else {
                     SpawnCratePile (false);
                 }
-            } else if (random > 10) //Special powerup box
-            {
+            } else if(!Dog.instance.isPowerUpOn() && random > 10) //Special powerup box. Not while in superball mode.
+           {
                 SpawnCrate (true, false);
             } else {
                 SpawnRock (false, false, 0);
@@ -178,6 +173,7 @@ public class SpawnObjects : MonoBehaviour {
             if (doubleObstacle) {
                 doubleObstacles[currentDoubleObstacle - 2].gameObject.SetActive (true);
                 doubleObstacles[currentDoubleObstacle - 1].gameObject.SetActive (true);
+                doubleObstacle = false;
             } else {
                 obstacles[currentObstacle].gameObject.SetActive (true);
             }
@@ -191,12 +187,11 @@ public class SpawnObjects : MonoBehaviour {
             }
         }
         //Food spawns
-        if (CanSpawnFood())
-        {
+        if(foodAllowedToSpawn && CanSpawnFood()){
             //Determines which food to spawn by random
             float random = rnd.Next(0, 3);
-            if (foodAllowedToSpawn && random <= 2) //66% pizzas
-            {
+            if(random <= 2) //66% pizzas
+           {
                 SpawnPizza();
             }
             else
@@ -217,7 +212,6 @@ public class SpawnObjects : MonoBehaviour {
         obstacleMaxFrequency = 3;
         //spawn obstacle
         if (CanSpwanObstacle ()) {
-            bool doubleObstacle = false;
             int random = rnd.Next (12);
             if (random <= 2) {
                 if (rnd.Next (3) == 1) { //spawn a cat on top of crate
@@ -242,8 +236,8 @@ public class SpawnObjects : MonoBehaviour {
                 nextObstacleCountdown = -5;
                 doubleObstacle = true;
                 SpawnDoubleObstacle (4);
-            } else if (random > 10) //Special powerup box
-            {
+            } else if(!Dog.instance.isPowerUpOn() && random > 10) //Special powerup box. Not while in superball mode.
+           {
                 SpawnCrate (true, false);
             } else {
                 SpawnRock (false, false, 0);
@@ -251,6 +245,7 @@ public class SpawnObjects : MonoBehaviour {
             if (doubleObstacle) {
                 doubleObstacles[currentDoubleObstacle - 2].gameObject.SetActive (true);
                 doubleObstacles[currentDoubleObstacle - 1].gameObject.SetActive (true);
+                doubleObstacle = false;
             } else {
                 obstacles[currentObstacle].gameObject.SetActive (true);
             }
@@ -264,22 +259,17 @@ public class SpawnObjects : MonoBehaviour {
             }
         }
         //Food spawns
-        if (CanSpawnFood())
-        {
+        if(foodAllowedToSpawn && CanSpawnFood()){
             //Determines which food to spawn by random
             float random = rnd.Next(0, 3);
-            if (foodAllowedToSpawn && random <= 2) //66% pizzas
-            {
+            if(random <= 2){ //66% pizzas
                 SpawnPizza();
-            }
-            else
-            {
+            } else {
                 SpawnChocolate();
             }
             currentFood++;
             // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1)
-            {
+            if (currentFood >= foods.Length - 1) {
                 currentFood = 0;
             }
         }
@@ -297,7 +287,7 @@ public class SpawnObjects : MonoBehaviour {
     // params: special: spawns powerup box
     //params: tupla: spawn a box as part of a double obstacle
     private void SpawnCrate (bool special, bool tupla) {
-        Destroy(obstacles[currentObstacle]);
+        //Destroy(obstacles[currentObstacle]);
         if (special) {
             obstacles[currentObstacle] = (GameObject) Instantiate (powerUpBoxPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
@@ -312,7 +302,7 @@ public class SpawnObjects : MonoBehaviour {
     // Crate pile
     // Param: tupla: spawn the pile as part of a double obstacle
     private void SpawnCratePile (bool tupla) {
-        Destroy(obstacles[currentObstacle]);
+        //Destroy(obstacles[currentObstacle]);
         if (!tupla) {
             obstacles[currentObstacle] = (GameObject) Instantiate (cratePilePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         } else {
@@ -322,13 +312,13 @@ public class SpawnObjects : MonoBehaviour {
 
     // Two obstacles on top of each other
     private void SpawnDoubleCrate () {
-        Destroy(obstacles[currentObstacle]);
+        //Destroy(obstacles[currentObstacle]);
         obstacles[currentObstacle] = (GameObject) Instantiate (twoCratesPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
     }
 
     // Three obstacles on top of each other
     private void SpawnTripleCrate () {
-        Destroy(obstacles[currentObstacle]);
+        //Destroy(obstacles[currentObstacle]);
         doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (threeCratesPrefab, new Vector2 (spawnDistance + spawnDistance / 2, 0), Quaternion.identity);
     }
 
@@ -337,7 +327,7 @@ public class SpawnObjects : MonoBehaviour {
     // Params: pile rock is part of a double obstacle with crate pile
     // Params: height: height placement of rock in a double obstacle
     private void SpawnRock (bool tupla, bool pile, int height) {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        //Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (tupla) {
             if (!pile) {
                 doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (rockPrefab, new Vector2 (spawnDistance + spawnDistance / 2, rockMaxHeight / height), Quaternion.identity);
@@ -353,16 +343,16 @@ public class SpawnObjects : MonoBehaviour {
     // Param: tupla: cat is part of a double obstacle
     // param: height: height where to spawn. 0==ground, else is on top of a crate.
     private void spawnCat (bool tupla, float height) {
-        Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
+        //Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
         if (tupla) {
             doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, height + 0.95f), Quaternion.identity);
-        } else {
+        } else{
             obstacles[currentObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         }
     }
 
     // Spawns the selected double obstacle type.
-    // params: 1 == single box + rock, 2 == sigle box with cat on top
+    // params: 1 == single box + rock, 2 == single box with cat on top
     // params: 3 == create pile followed by a rock, 4 == one box followed by three boxes
     private void SpawnDoubleObstacle(int choice)
     {
@@ -394,16 +384,15 @@ public class SpawnObjects : MonoBehaviour {
 
     // Pizza spawning
     private void SpawnPizza () {
-        Destroy(foods[currentFood]);
+        //Destroy(foods[currentFood]);
         foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
 
     // Chocolate spawning
     private void SpawnChocolate () {
-        Destroy(foods[currentFood]);
+        //Destroy(foods[currentFood]);
         foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
     }
-
 
     //****************************
     //Additional helper functions*
@@ -435,5 +424,31 @@ public class SpawnObjects : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    // Called by other scripts.
+    // Returns current obstacle on screen.
+    public GameObject getCurrentObstacle(){
+        if(doubleObstacle){
+            var object1 = doubleObstacles[currentDoubleObstacle];
+            if(object1 == null){
+                //object1 = doubleObstacles[currentDoubleObstacle - 1];
+                //return object1;
+                return doubleObstacles[currentDoubleObstacle - 1];
+            } else{
+                return object1;
+            }
+
+        } else{
+            var object1 = obstacles[currentObstacle];
+            if(object1 == null){
+                //object1 = obstacles[currentObstacle - 1];
+                return obstacles[currentObstacle - 1];
+                //return object1;
+            } else{
+                return object1;
+            }
+        }
+
     }
 }

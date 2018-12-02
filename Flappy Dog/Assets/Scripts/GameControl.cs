@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 using System.IO;
 using System;
 
-
 // Controls game state
 public class GameControl : MonoBehaviour
 {
@@ -12,6 +11,7 @@ public class GameControl : MonoBehaviour
 
     public Text scoreText;
     public Text hiscoreText;
+    public Text pizzaText;
     public GameObject gameOverText;
     public GameObject tryAgainText;
     public GameObject GameOverPanel;
@@ -22,7 +22,7 @@ public class GameControl : MonoBehaviour
     private int score = 0;
     private int hiscore;
     private float timer = 0;
-
+    private int numOfFood = 0;
 
     // Called once on every gaming session before Start
     private void Awake()
@@ -46,10 +46,10 @@ public class GameControl : MonoBehaviour
     //GameControl doesn't need to follow frame updates. Counts score for every second.
     void Update()
     {
-    	if(Dog.godMode)
-    	{
-    		return;
-    	}
+        if(Dog.godMode)
+        {
+            return;
+        }
         // adds points
 
         timer += Time.deltaTime;
@@ -59,6 +59,7 @@ public class GameControl : MonoBehaviour
             {
                 score += 1;
                 scoreText.text = "Score: " + score.ToString();
+
                 timer = 0;
             }
         }
@@ -74,8 +75,9 @@ public class GameControl : MonoBehaviour
         score = 0;
         hiscore = Int32.Parse(File.ReadAllText(hiscorePath));
         hiscoreText.text = "Hiscore: " + hiscore.ToString();
+        pizzaText.text = "Pizza: " + numOfFood.ToString() + " / 5";
         SoundManager.instance.gameOver.Stop();
-    	SoundManager.instance.backgroudMusic.Play();
+        SoundManager.instance.backgroudMusic.Play();
         gameOver = false;
     }
 
@@ -89,6 +91,11 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    // Called by other scripts when eating any food object.
+    public void eatFood(int foodCount) {
+        pizzaText.text = "Pizza: " + foodCount.ToString () + " / 5";
+    }
+
     // Called by other scripts if the player loses
     public void GameOver()
     {
@@ -97,10 +104,9 @@ public class GameControl : MonoBehaviour
         {
             hiscore = score;
             hiscoreText.text = "Hiscore: " + hiscore.ToString();
-            using(StreamWriter writetext = new StreamWriter(hiscorePath))
-			{
-   			    writetext.WriteLine(hiscore.ToString());
-	        }
+            using(StreamWriter writetext = new StreamWriter(hiscorePath)) {
+                writetext.WriteLine(hiscore.ToString());
+            }
         }
         playButton.gameObject.SetActive(true);
 
