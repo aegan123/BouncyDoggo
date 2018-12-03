@@ -6,6 +6,7 @@ public class SoundManager : MonoBehaviour {
 		public AudioSource superMode;
         public AudioSource backgroudMusic;
         public AudioSource gameOver;
+        public AudioSource efxSound;
         public static SoundManager instance = null;     //Allows other scripts to call functions from SoundManager.
 
         void Awake ()
@@ -28,10 +29,10 @@ public class SoundManager : MonoBehaviour {
         public void PlaySingle(AudioClip clip)
         {
             //Set the clip of our efxSource audio source to the clip passed in as a parameter.
-            superMode.clip = clip;
+            efxSound.clip = clip;
 
             //Play the clip.
-            superMode.Play ();
+            efxSound.Play ();
         }
 
 }

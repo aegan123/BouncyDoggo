@@ -1,192 +1,310 @@
-﻿using UnityEngine;
 ﻿using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;﻿
 
 // Controls player's interactions
-public class Dog : MonoBehaviour
-{
-    //Public variables are configurable in Unity as well
+public class Dog : MonoBehaviour {
+
+    public static Dog instance;
+
+    // Public variables (configurable in Unity)
     public Sprite basicSprite;
     public Sprite powerupSprite;
+    public Animator animator;
     public float bounceUpVelocity = 8;
     public float doubleJumpUpVelocity = 6;
     public float tiltTime = 1;
-    public int powerupPizzaLimit = 5;
     public float powerupDuration = 15.0f;
+    public float powerupColliderRadius = 1.5f;
+    public float baseColliderRadius = 1;
+    public int powerupFoodLimit = 5;
+    public int doubleJumpLimit = 2; //How many jumps available in air
+    public int powerupJumpLimit = 1; //How many times can jump in rolling ball mode
+    public int maxDistance = 5; // max distance to obstacle to continue superball mode to avoid instant death
 
+    // Other variables
     private Rigidbody2D playerBody;
-    private Quaternion downRotation = Quaternion.Euler(0, 0, -45);
-    private Quaternion upRotation = Quaternion.Euler(0, 0, 45);
+    private Quaternion downRotation = Quaternion.Euler (0, 0, -45);
+    private Quaternion upRotation = Quaternion.Euler (0, 0, 45);
     private bool isDead = false;
-    private bool doubleJumpAvailable = true;
+    private bool diveAvailable = false;
     private bool powerupOn = false;
-    private int pizzaCount = 0;
+    private float powerupTimer;
+    private int doubleJumpCount = 0;
+    private int powerupJumpCount = 0;
+    private int foodCount = 0;
 
+    // Animation variables
+    public bool canSwitch = false;
+    public bool waitActive = false;
+    public bool waitActive2 = false;
+
+    // Sounds
+    public AudioClip basicJump;
+    public AudioClip doubleJump;
+    public AudioClip eatPizza;
+    public AudioClip eatChocolate;
+    public AudioClip destroyBox;
+
+    //for testing purposes only!!!
+    //When true the Dog doesn't collide with object and points are not counted.
+    public static bool godMode = false;
+
+    // Animation waiter
+    IEnumerator Wait () {
+        waitActive = true;
+        yield return new WaitForSeconds (0.3f);
+        canSwitch = true;
+        waitActive = false;
+        animator.SetBool ("jumped", false);
+    }
+    private void Waiter () {
+        if (!waitActive) {
+            StartCoroutine (Wait ());
+        }
+    }
 
     // Called once on every gaming session before Start
-    private void Awake()
-    {
-        playerBody = GetComponent<Rigidbody2D>();
+    private void Awake () {
+        if (instance != this)
+        {
+            Destroy(instance);
+        }
+        instance = this;
+
+        playerBody = GetComponent<Rigidbody2D> ();
     }
 
     // Called on every game frame
-    private void Update()
-    {
-        if (isDead == false)
-        {
-            playerBody.velocity = new Vector2(0, playerBody.velocity.y);
-            if (powerupOn == true)
-            {
-                //Superball mode timer.
-                powerupDuration -= Time.deltaTime;
-                if (powerupDuration < 0)
+    private void Update () {
+        if (isDead == false) {
+            playerBody.velocity = new Vector2 (0, playerBody.velocity.y);
+            if (powerupOn) {
+                //Double jump always available once per bounce
+                if (powerupJumpCount < powerupJumpLimit)
                 {
-                    DeactivatePowerup();
-                    powerupDuration = 5.0f;
+                    if (Input.GetMouseButtonDown(0) || Input.GetKeyDown("up"))
+                    {
+                        DoubleJump();
+                        //animator.SetBool("Clicked", false);
+                    }
+                }
+                //Powerup timer
+                powerupTimer -= Time.deltaTime;
+                // If obstacle is too close, extend timer to avoid instant death.
+                if (isObstacleTooClose ()) {
+                    powerupTimer += Time.deltaTime;
+                }
+                if (powerupTimer < 0) {
+                    DeactivatePowerup ();
                 }
             }
-            if (doubleJumpAvailable == true && Input.GetMouseButtonDown(0))
+            else
             {
-                DoubleJump();
+                //Double jump always available once per bounce
+                if (doubleJumpCount < doubleJumpLimit)
+                {
+                    if (Input.GetMouseButtonDown(0) || Input.GetKeyDown("up"))
+                    {
+                        DoubleJump();
+                        //animator.SetBool("Clicked", false);
+                    }
+                }
+                //Diving is available  when not on poweup & once per bounce only when falling downwards
+                if (diveAvailable && playerBody.velocity.y < 0)
+                {
+                    if (Input.GetMouseButtonDown(1) || Input.GetKeyDown("down"))
+                    {
+                        Dive();
+                        //animator.SetBool("Clicked", false);
+                    }
+                }
+                //Adds downfall rotation
+                transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
             }
-            //Adds downfall rotation
-            transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltTime * Time.deltaTime);
+        }
+    }
+
+    // Called on touching horizontal colliders (colliders not set as triggers)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!isDead)
+        {
+            if (powerupOn)
+            {
+                powerupJumpCount = 0;
+            }
+            else
+            {
+                Bounce();
+                doubleJumpCount = 0;
+            }
+            diveAvailable = true;
+        }
+    }
+
+    // Called on touching colliders set as triggers
+    private void OnTriggerEnter2D (Collider2D collision) {
+        if (godMode) {
+            Destroy (collision.gameObject);
+            return;
+        }
+        if (!isDead) {
+            //Collision with crates
+            if (collision.gameObject.name.Contains("crate")) {
+                if (powerupOn) {
+                    Destroy(collision.gameObject);
+                    SoundManager.instance.PlaySingle(destroyBox);
+                } else {
+                    Die ();
+                }
+            }
+            //Collision with rocks
+            else if (collision.gameObject.name.Contains("rock")) {
+                Die ();
+            }
+            //Collision with pizzas
+            else if (collision.gameObject.name.Contains("pizza")) {
+                EatFood (1); //Pizzas food value = 1
+                Destroy(collision.gameObject);
+            }
+            //Collision with chocolates
+            else if (collision.gameObject.name.Contains("chocolate"))
+            {
+                EatBadfood(1); //Chocolate poison value = 1
+                Destroy(collision.gameObject);
+            }
+            //Collision with boxes
+            else if (collision.gameObject.name.Contains("box"))
+            {
+                Destroy(collision.gameObject);
+                SoundManager.instance.PlaySingle(destroyBox);
+            }
         }
     }
 
     // Double jump functionality
     private void DoubleJump()
     {
-        transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, doubleJumpUpVelocity);
-        doubleJumpAvailable = false;
+        if (powerupOn)
+        {
+            powerupJumpCount++;
+        }
+        else
+        {
+            Waiter();
+            animator.SetBool("jumped", true);
+            doubleJumpCount++;
+        }
+        transform.rotation = upRotation;
+        SoundManager.instance.PlaySingle(doubleJump);
     }
 
-    // Called on touching normal colliders (colliders not set as triggers)
-    private void OnCollisionEnter2D(Collision2D collision)
+    // Diving functionality
+    private void Dive()
     {
-        if (isDead == false)
-        {
-            if (powerupOn == false)
-            {
-                Bounce();
-            }
-            else
-            {
-                doubleJumpAvailable = true;
-            }
-        }
+        playerBody.velocity = new Vector2(0, -doubleJumpUpVelocity);
+        diveAvailable = false;
+        Waiter();
+        animator.SetBool("jumped", true);
+        transform.rotation = downRotation;
+        SoundManager.instance.PlaySingle(doubleJump);
     }
 
     // Bounce functionality
     private void Bounce()
     {
         playerBody.angularVelocity = 0; //Prevents player's collider from rolling
-        transform.rotation = upRotation;
         playerBody.velocity = new Vector2(0, bounceUpVelocity);
-        doubleJumpAvailable = true;
-    }
-
-    // Called on touching colliders set as triggers
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        //Collision with crates
-        if (collision.gameObject.name == "crate")
-        {
-            Debug.Log("Crate collision");
-            if (powerupOn)
-            {
-                SpawnObjects.instance.DestroyCrate();
-            }
-            else
-            {
-                Die();
-            }
-        }
-        //Collision with crate piles
-        else if (collision.gameObject.tag == "cratepile")
-        {
-            Debug.Log("Crate pile collision");
-            if (powerupOn)
-            {
-                SpawnObjects.instance.DestroyCratePile();
-            }
-            else
-            {
-                Die();
-            }
-        }
-        //Collision with vertical rocks
-        else if (collision.gameObject.name == "rock")
-        {
-            Debug.Log("Rock collision");
-            Die();
-        }
-        //Collision with pizzas
-        else if (collision.gameObject.name == "pizza")
-        {
-            Debug.Log("Pizza collision");
-            SpawnObjects.instance.DestroyPizza();
-            EatPizza();
-        }
+        Waiter();
+        animator.SetBool("jumped", true);
+        transform.rotation = upRotation;
+        SoundManager.instance.PlaySingle(basicJump);
     }
 
     // Dying functionality
-    private void Die()
-    {
-    	//Stops music when dead
-    	SoundManager.instance.superMode.Stop();
-        SoundManager.instance.backgroudMusic.Stop();
-        //Plays gameover music
-        SoundManager.instance.gameOver.Play();
+    private void Die () {
         isDead = true;
-        Debug.Log("Player died");
+        //Stops music when dead
+        SoundManager.instance.superMode.Stop ();
+        SoundManager.instance.backgroudMusic.Stop ();
+        //Plays gameover music
+        SoundManager.instance.gameOver.Play ();
         //Informs GameControl that game is over
-        GameControl.instance.GameOver();
+        GameControl.instance.GameOver ();
     }
 
-    // Pizza functionality
-    private void EatPizza()
-    {
-        Debug.Log(pizzaCount + " pizzas eaten");
-        GameControl.instance.AddPoint();
-        //Activates powerup after 5 pizzas
-        if (pizzaCount < powerupPizzaLimit - 1)
+    // Food functionality
+    private void EatFood (int foodValue) {
+        SoundManager.instance.PlaySingle (eatPizza);
+        GameControl.instance.AddPoint (10);
+        foodCount += foodValue;
+        GameControl.instance.eatFood(foodCount);
+        if (foodCount >= powerupFoodLimit)
         {
-            pizzaCount++;
-        }
-        else
-        {
-            pizzaCount = 0;
             ActivatePowerup();
+            foodCount = 0;
+        }
+    }
+
+    // Poison functionality
+    private void EatBadfood(int poisonValue)
+    {
+        SoundManager.instance.PlaySingle(destroyBox);
+        foodCount -= poisonValue;
+        GameControl.instance.eatFood (foodCount);
+        if (foodCount < 0)
+        {
+            if (powerupOn)
+            {
+                foodCount = 0;
+                DeactivatePowerup();
+            }
+            else
+            {
+                Die();
+            }
         }
     }
 
     // Powerup functionality
-    private void ActivatePowerup()
-    {
+    private void ActivatePowerup () {
+        powerupTimer = powerupDuration;
         powerupOn = true;
-        Debug.Log("Powerup activated");
+        animator.SetBool("powerupOn", true);
+        //Debug.Log("Powerup activated");
         //Prevents pizzas from spanwning while in superball mode.
-        SpawnObjects.SetCanSpawnPizza(false);
-        GetComponent<SpriteRenderer>().sprite = powerupSprite;
-        GetComponent<BoxCollider2D>().enabled = false;
-        GetComponent<CircleCollider2D>().enabled = true;
-        SoundManager.instance.backgroudMusic.Pause();
-		SoundManager.instance.superMode.Play();
+        SpawnObjects.SetCanSpawnFood (false);
+        GetComponent<SpriteRenderer> ().sprite = powerupSprite;
+        GetComponent<CircleCollider2D> ().radius = powerupColliderRadius;
+        SoundManager.instance.backgroudMusic.Pause ();
+        SoundManager.instance.superMode.Play ();
     }
-    private void DeactivatePowerup()
-    {
-        powerupOn = false;
-        Debug.Log("Powerup deactivated");
+    private void DeactivatePowerup () {
+        animator.SetBool("powerupOn", false);
+        //Debug.Log("Powerup deactivated");
         //Pizzas can spawn again.
-        SpawnObjects.SetCanSpawnPizza(true);
-        GetComponent<SpriteRenderer>().sprite = basicSprite;
-        GetComponent<BoxCollider2D>().enabled = true;
-        GetComponent<CircleCollider2D>().enabled = false;
+        SpawnObjects.SetCanSpawnFood (true);
+        GetComponent<SpriteRenderer> ().sprite = basicSprite;
+        GetComponent<CircleCollider2D>().radius = baseColliderRadius;
         //Stop supermode music and resume background music
-        SoundManager.instance.superMode.Stop();
-        SoundManager.instance.backgroudMusic.Play();
-        DoubleJump(); //Exit's rolling with a jump
+        SoundManager.instance.superMode.Stop ();
+        SoundManager.instance.backgroudMusic.Play ();
+        doubleJumpCount = 0;
+        Bounce (); //Exit's rolling with a bounce
+        powerupOn = false; //TODO: This only after certain safe time?
+        GameControl.instance.eatFood(0);
+    }
+
+    // Called by other scripts.
+    public bool isPowerUpOn () {
+        return powerupOn;
+    }
+
+    // Calculates the distance to the next obstacle.
+    private bool isObstacleTooClose () {
+        var distance = Vector2.Distance (GameObject.FindWithTag ("Player").transform.position, SpawnObjects.instance.getCurrentObstacle ().transform.position);
+        //Debug.Log ("Distance to obstacle: " + distance);
+        return distance < maxDistance;
     }
 }
