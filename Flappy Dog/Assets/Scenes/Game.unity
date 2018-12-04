@@ -1928,7 +1928,7 @@ MonoBehaviour:
   bounceUpVelocity: 7.5
   doubleJumpUpVelocity: 10
   tiltTime: 0.85
-  powerupDuration: 15
+  powerupDuration: 10
   powerupColliderRadius: 1.5
   baseColliderRadius: 1
   powerupFoodLimit: 5

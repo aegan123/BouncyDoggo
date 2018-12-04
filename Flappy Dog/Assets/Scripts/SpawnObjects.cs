@@ -385,13 +385,13 @@ public class SpawnObjects : MonoBehaviour {
     // Pizza spawning
     private void SpawnPizza () {
         //Destroy(foods[currentFood]);
-        foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
+        foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, FoodSpawnPoint(spawnDistance, rnd.Next(6)), Quaternion.identity);
     }
 
     // Chocolate spawning
     private void SpawnChocolate () {
         //Destroy(foods[currentFood]);
-        foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
+        foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, FoodSpawnPoint(spawnDistance, rnd.Next(6)), Quaternion.identity);
     }
 
     //****************************
@@ -449,6 +449,17 @@ public class SpawnObjects : MonoBehaviour {
                 return object1;
             }
         }
+    }
 
+    // Ensures a spawnpoint with no obstacles on
+    private Vector2 FoodSpawnPoint(float x, float y)
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(new Vector2(x, y), 3);
+        foreach (Collider2D col in hitColliders)
+        {
+            Debug.Log("collider hit, moving onward");
+            return FoodSpawnPoint(x + 2, y);
+        }
+        return new Vector2(x, y);
     }
 }
