@@ -246,7 +246,9 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.PlaySingle (eatPizza);
         GameControl.instance.AddPoint (10);
         foodCount += foodValue;
-        GameControl.instance.eatFood(foodCount);
+        if(!powerupOn){
+            GameControl.instance.eatFood(foodCount);
+        }
         if (foodCount >= powerupFoodLimit)
         {
             ActivatePowerup();
