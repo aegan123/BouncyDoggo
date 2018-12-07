@@ -46,6 +46,7 @@ public class Dog : MonoBehaviour {
     public AudioClip destroyBox;
 
     public GameObject ShatteredBox;
+    public float shatterSpeed = 0.2f;
 
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
@@ -63,6 +64,21 @@ public class Dog : MonoBehaviour {
         if (!waitActive) {
             StartCoroutine (Wait ());
         }
+    }
+    public Component[] pieces;
+    IEnumerator crateWait (GameObject shatterClone) {
+        //Debug.Log("In crateWait!");
+        yield return new WaitForSeconds (2.5f);
+        /*
+        pieces = shatterClone.GetComponentsInChildren<HingeJoint>();
+        foreach (HingeJoint piece in pieces){
+            Debug.Log("Changing collider!");
+            piece.GetComponent<BoxCollider2D>().enabled = false;
+        }
+        //shatterClone.GetComponent<BoxCollider2D>().enabled = true;
+        yield return new WaitForSeconds (0.5f); 
+        */
+        Destroy(shatterClone);
     }
 
     // Called once on every gaming session before Start
@@ -154,9 +170,12 @@ public class Dog : MonoBehaviour {
             //Collision with crates
             if (collision.gameObject.name.Contains("crate")) {
                 if (powerupOn) {
-                    // Sijainti: collision.gameObject.transform.position
+                    GameObject shatterClone = (GameObject) Instantiate(ShatteredBox, collision.gameObject.transform.position, transform.rotation);
+                    //Sijainti: collision.gameObject.transform.position
                     Destroy(collision.gameObject);
                     SoundManager.instance.PlaySingle(destroyBox);
+                    StartCoroutine (crateWait(shatterClone));
+
                 } else {
                     Die ();
                 }
