@@ -119,22 +119,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2) //66% pizzas
-           {
-                SpawnPizza();
-            }
-            else
-            {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1)
-            {
-                currentFood = 0;
-            }
+            spawnFood();
         }
     }
 
@@ -188,22 +173,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2) //66% pizzas
-           {
-                SpawnPizza();
-            }
-            else
-            {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1)
-            {
-                currentFood = 0;
-            }
+            spawnFood();
         }
 
     }
@@ -260,18 +230,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2){ //66% pizzas
-                SpawnPizza();
-            } else {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1) {
-                currentFood = 0;
-            }
+            spawnFood();
         }
     }
 
@@ -382,6 +341,25 @@ public class SpawnObjects : MonoBehaviour {
         currentDoubleObstacle++;
     }
 
+    // Spawns all types of food.
+    private void spawnFood(){
+            //Determines which food to spawn by random
+            int random = rnd.Next(4);
+            if(random <= 2) //66% pizzas
+           {
+                SpawnPizza();
+            }
+            else
+            {
+                SpawnChocolate();
+            }
+            currentFood++;
+            // Reset back to the beginning of the array.
+            if (currentFood >= foods.Length - 1)
+            {
+                currentFood = 0;
+            }
+    }
     // Pizza spawning
     private void SpawnPizza () {
         //Destroy(foods[currentFood]);

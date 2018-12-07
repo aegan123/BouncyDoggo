@@ -76,7 +76,7 @@ public class Dog : MonoBehaviour {
 
     // Called on every game frame
     private void Update () {
-        if (isDead == false) {
+        if (!isDead) {
             playerBody.velocity = new Vector2 (0, playerBody.velocity.y);
             if (powerupOn) {
                 //Double jump always available once per bounce

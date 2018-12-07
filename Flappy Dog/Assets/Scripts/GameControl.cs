@@ -53,7 +53,7 @@ public class GameControl : MonoBehaviour
         // adds points
 
         timer += Time.deltaTime;
-        if (gameOver == false)
+        if (!gameOver)
         {
             if (timer > 1f)
             {
@@ -84,7 +84,7 @@ public class GameControl : MonoBehaviour
     // Called by other scripts when the player scores a point
     public void AddPoint(int point)
     {
-        if (gameOver == false)
+        if (!gameOver)
         {
             score+=point;
             scoreText.text = "Score: " + score.ToString();

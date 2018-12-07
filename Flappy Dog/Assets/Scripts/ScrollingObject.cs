@@ -24,7 +24,7 @@ public class ScrollingObject : MonoBehaviour
     private void Update()
     {
         //Stops background scrolling if the game ends
-        if (GameControl.instance.gameOver == true)
+        if (GameControl.instance.gameOver)
         {
             objectBody.velocity = new Vector2(0, objectBody.velocity.y);
         }
