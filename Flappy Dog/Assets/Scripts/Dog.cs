@@ -45,6 +45,8 @@ public class Dog : MonoBehaviour {
     public AudioClip eatChocolate;
     public AudioClip destroyBox;
 
+    public GameObject ShatteredBox;
+
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
     public static bool godMode = false;
@@ -152,6 +154,7 @@ public class Dog : MonoBehaviour {
             //Collision with crates
             if (collision.gameObject.name.Contains("crate")) {
                 if (powerupOn) {
+                    // Sijainti: collision.gameObject.transform.position
                     Destroy(collision.gameObject);
                     SoundManager.instance.PlaySingle(destroyBox);
                 } else {
