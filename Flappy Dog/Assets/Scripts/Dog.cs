@@ -93,10 +93,10 @@ public class Dog : MonoBehaviour {
                 //Powerup timer
                 powerupTimer -= Time.deltaTime;
                 // If obstacle is too close, extend timer to avoid instant death.
-                if (isObstacleTooClose ()) {
-                    powerupTimer += Time.deltaTime;
-                }
-                if (powerupTimer < 0) {
+                //if (isObstacleTooClose ()) {
+                //    powerupTimer += Time.deltaTime;
+                //}
+                if (powerupTimer < 0 && !isObstacleTooClose()) {
                     DeactivatePowerup ();
                 }
             }
@@ -155,7 +155,8 @@ public class Dog : MonoBehaviour {
             if (collision.gameObject.name.Contains("crate")) {
                 if (powerupOn) {
                     // Sijainti: collision.gameObject.transform.position
-                    Destroy(collision.gameObject);
+                    //Destroy(collision.gameObject);
+                    collision.gameObject.SetActive(false);
                     SoundManager.instance.PlaySingle(destroyBox);
                 } else {
                     Die ();
@@ -168,18 +169,21 @@ public class Dog : MonoBehaviour {
             //Collision with pizzas
             else if (collision.gameObject.name.Contains("pizza")) {
                 EatFood (1); //Pizzas food value = 1
-                Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
+                //Destroy(collision.gameObject);
             }
             //Collision with chocolates
             else if (collision.gameObject.name.Contains("chocolate"))
             {
                 EatBadfood(1); //Chocolate poison value = 1
-                Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
+                //Destroy(collision.gameObject);
             }
             //Collision with boxes
             else if (collision.gameObject.name.Contains("box"))
             {
-                Destroy(collision.gameObject);
+                //Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
                 SoundManager.instance.PlaySingle(destroyBox);
             }
         }
@@ -295,7 +299,7 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.backgroudMusic.Play ();
         doubleJumpCount = 0;
         Bounce (); //Exit's rolling with a bounce
-        powerupOn = false; //TODO: This only after certain safe time?
+        powerupOn = false;
         GameControl.instance.eatFood(0);
     }
 
@@ -306,8 +310,28 @@ public class Dog : MonoBehaviour {
 
     // Calculates the distance to the next obstacle.
     private bool isObstacleTooClose () {
-        var distance = Vector2.Distance (GameObject.FindWithTag ("Player").transform.position, SpawnObjects.instance.getCurrentObstacle ().transform.position);
-        //Debug.Log ("Distance to obstacle: " + distance);
-        return distance < maxDistance;
+        var object1 = SpawnObjects.instance.getCurrentObstacle ();
+        var player=GameObject.FindWithTag ("Player");
+        var heading = object1[0].transform.position - player.transform.position;
+        float distance1=100;
+        if(heading.x>0){
+            distance1 = Vector2.Distance (player.transform.position, object1[0].transform.position);
+        }
+        if(object1.Length>1){
+            heading = object1[1].transform.position - player.transform.position;
+            float distance2=100;
+            if(heading.x>0){
+                distance2=Vector2.Distance (player.transform.position, object1[1].transform.position);
+            }
+            Debug.Log ("Distance to obstacle[0]: " + distance1);
+            Debug.Log("object1[0] = "+object1[0].name);
+            Debug.Log("Distance to obstacle[1]: "+distance2);
+            Debug.Log("object[1] = "+object1[1]);
+            return distance1 < maxDistance || distance2 < maxDistance;
+        }else{
+            Debug.Log ("Distance to obstacle1: " + distance1);
+            Debug.Log("object1[0] = "+object1[0].name);
+            return distance1 < maxDistance;
+        }
     }
 }

@@ -406,18 +406,43 @@ public class SpawnObjects : MonoBehaviour {
 
     // Called by other scripts.
     // Returns current obstacle on screen.
-    public GameObject getCurrentObstacle(){
+    public GameObject[] getCurrentObstacle(){
+        GameObject[] objects=null;
         if(doubleObstacle){
-            var object1 = doubleObstacles[currentDoubleObstacle];
+            objects=new GameObject[2];
+            if (currentDoubleObstacle==0)
+            {
+                if(doubleObstacles[doubleObstacles.Length-1]==null){
+                    objects[0]=doubleObstacles[currentDoubleObstacle];
+                    objects[1]=doubleObstacles[currentDoubleObstacle+1];
+                }else{
+                    objects[0]=doubleObstacles[doubleObstacles.Length-2];
+                    objects[1]=doubleObstacles[doubleObstacles.Length-1];
+                }
+            }
+            else{
+                objects[0]=doubleObstacles[currentDoubleObstacle-2];
+                objects[1]=doubleObstacles[currentDoubleObstacle-1];
+            }
+            /*
+            var object1 = doubleObstacles[currentDoubleObstacle-1];
             if(object1 == null){
                 //object1 = doubleObstacles[currentDoubleObstacle - 1];
                 //return object1;
-                return doubleObstacles[currentDoubleObstacle - 1];
+                return doubleObstacles[currentDoubleObstacle - 2];
             } else{
                 return object1;
             }
-
+            */
         } else{
+            objects=new GameObject[1];
+            if(currentObstacle==0){
+                objects[0]=obstacles[obstacles.Length-1];
+            }
+            else{
+                objects[0]=obstacles[currentObstacle-1];
+            }
+            /*
             var object1 = obstacles[currentObstacle];
             if(object1 == null){
                 //object1 = obstacles[currentObstacle - 1];
@@ -426,7 +451,10 @@ public class SpawnObjects : MonoBehaviour {
             } else{
                 return object1;
             }
+            */
         }
+        Debug.Log("array length: "+objects.Length);
+        return objects;
     }
 
     // Ensures a spawnpoint with no obstacles on
@@ -435,7 +463,7 @@ public class SpawnObjects : MonoBehaviour {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(new Vector2(x, y), 3);
         foreach (Collider2D col in hitColliders)
         {
-            Debug.Log("collider hit, moving onward");
+            //Debug.Log("collider hit, moving onward");
             return FoodSpawnPoint(x + 2, y);
         }
         return new Vector2(x, y);
