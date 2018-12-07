@@ -253,7 +253,7 @@ public class Dog : MonoBehaviour {
     // Poison functionality
     private void EatBadfood(int poisonValue)
     {
-        SoundManager.instance.PlaySingle(destroyBox);
+        SoundManager.instance.PlaySingle(eatChocolate);
         foodCount -= poisonValue;
         GameControl.instance.eatFood (foodCount);
         if (foodCount < 0)
