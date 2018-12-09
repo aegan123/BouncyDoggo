@@ -261,7 +261,7 @@ public class Dog : MonoBehaviour {
     {
         SoundManager.instance.PlaySingle(eatChocolate);
         foodCount -= poisonValue;
-        GameControl.instance.eatFood (foodCount);
+        GameControl.instance.AddPoint(-10);
         if (foodCount < 0)
         {
             if (powerupOn)
@@ -271,8 +271,11 @@ public class Dog : MonoBehaviour {
             }
             else
             {
+                GameControl.instance.eatFood (0);
                 Die();
             }
+        }else{
+            GameControl.instance.eatFood (foodCount);
         }
     }
 
@@ -329,10 +332,18 @@ public class Dog : MonoBehaviour {
             Debug.Log("object1[0] = "+object1[0].name);
             Debug.Log("Distance to obstacle[1]: "+distance2);
             Debug.Log("object[1] = "+object1[1]);
+            if (object1[0].gameObject.name.Contains("crate pile")) {
+                distance1/=4;
+            }else if(object1[1].gameObject.name.Contains("crate pile")){
+                distance2/=4;
+            }
             return distance1 < maxDistance || distance2 < maxDistance;
         }else{
             Debug.Log ("Distance to obstacle1: " + distance1);
             Debug.Log("object1[0] = "+object1[0].name);
+            if(object1[0].gameObject.name.Contains("crate pile")){
+                distance1/=4;
+            }
             return distance1 < maxDistance;
         }
     }
