@@ -2006,7 +2006,7 @@ MonoBehaviour:
   powerupDuration: 10
   powerupColliderRadius: 1.5
   baseColliderRadius: 1
-  powerupFoodLimit: 1
+  powerupFoodLimit: 5
   doubleJumpLimit: 2
   powerupJumpLimit: 1
   maxDistance: 17

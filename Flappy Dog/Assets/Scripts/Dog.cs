@@ -66,8 +66,9 @@ public class Dog : MonoBehaviour {
         }
     }
     public Component[] pieces;
-    IEnumerator crateWait (GameObject shatterClone) {
+    IEnumerator crateWait (GameObject shatterClone, Collider2D collision) {
         //Debug.Log("In crateWait!");
+        yield return new WaitForSeconds (1f);
         yield return new WaitForSeconds (2.5f);
         /*
         pieces = shatterClone.GetComponentsInChildren<HingeJoint>();
@@ -78,11 +79,14 @@ public class Dog : MonoBehaviour {
         //shatterClone.GetComponent<BoxCollider2D>().enabled = true;
         yield return new WaitForSeconds (0.5f); 
         */
+        
+
         Destroy(shatterClone);
     }
 
     // Called once on every gaming session before Start
     private void Awake () {
+        animator.SetBool ("isDead", false);
         if (instance != this)
         {
             Destroy(instance);
@@ -174,7 +178,7 @@ public class Dog : MonoBehaviour {
                     //Sijainti: collision.gameObject.transform.position
                     Destroy(collision.gameObject);
                     SoundManager.instance.PlaySingle(destroyBox);
-                    StartCoroutine (crateWait(shatterClone));
+                    StartCoroutine (crateWait(shatterClone, collision));
 
                 } else {
                     Die ();
@@ -247,6 +251,7 @@ public class Dog : MonoBehaviour {
     // Dying functionality
     private void Die () {
         isDead = true;
+        animator.SetBool ("isDead", true);
         //Stops music when dead
         SoundManager.instance.superMode.Stop ();
         SoundManager.instance.backgroudMusic.Stop ();
