@@ -65,15 +65,13 @@ public class SpawnObjects : MonoBehaviour {
         doubleObstacles = new GameObject[doubleObstaclePoolSize];
         foods = new GameObject[foodPoolSize];
     }
-
-    // Called on every game frame
-    private void Update () {
-        nextObstacleCountdown += Time.deltaTime;
+private void FixedUpdate() {
+    nextObstacleCountdown += Time.deltaTime;
         nextFoodCountdown += Time.deltaTime;
         difficultyTimer += Time.deltaTime;
         if (!GameControl.instance.gameOver) {
             // TODO: IDEA: set timer for medium lower if high score is high enough
-            if (difficultyTimer < 30.0f) {
+            if (difficultyTimer < 0.0f) {
                 spawnEasy ();
             } else if (difficultyTimer < 60.0f) {
                 spawnMedium ();
@@ -81,7 +79,11 @@ public class SpawnObjects : MonoBehaviour {
                 spawnHard ();
             }
         }
-    }
+}
+    // Called on every game frame
+    //private void Update () {
+        
+    //}
 
     private void spawnEasy () {
         //Spawn obstacles
@@ -406,7 +408,45 @@ public class SpawnObjects : MonoBehaviour {
 
     // Called by other scripts.
     // Returns current obstacle on screen.
-    public GameObject[] getCurrentObstacle(){
+    public GameObject getCurrentObstacle(){
+        GameObject object1=null;
+        if(doubleObstacle){
+            Debug.Log("double obstacle");
+            Debug.Log("currentDoubleObstacle = "+currentDoubleObstacle);
+            if(currentDoubleObstacle==0){
+                if(doubleObstacles[doubleObstacles.Length-1]!=null){
+                    object1=doubleObstacles[doubleObstacles.Length-1];
+                }else
+                {
+                    object1=doubleObstacles[currentDoubleObstacle];
+                }
+            }else{
+                if(doubleObstacles[currentDoubleObstacle]==null){
+                    object1=doubleObstacles[currentDoubleObstacle-1];
+                }else{
+                    object1=doubleObstacles[currentDoubleObstacle];
+                }
+            
+            }
+        }else{
+            Debug.Log("single obstacle");
+            Debug.Log("currentObstacle = "+currentObstacle);
+            if(currentObstacle==0){
+                if(obstacles[obstacles.Length-1]!=null){
+                    object1=obstacles[obstacles.Length-1];
+                }else{
+                    object1=obstacles[currentObstacle];
+                }
+            }else{
+                if(obstacles[currentObstacle]==null){
+                    object1=obstacles[currentObstacle-1];
+                }else{
+                    object1=obstacles[currentObstacle];
+                }
+            }
+        }
+        return object1;
+        /*
         GameObject[] objects=null;
         if(doubleObstacle){
             objects=new GameObject[2];
@@ -434,6 +474,7 @@ public class SpawnObjects : MonoBehaviour {
                 return object1;
             }
             */
+            /*
         } else{
             objects=new GameObject[1];
             if(currentObstacle==0){
@@ -452,9 +493,11 @@ public class SpawnObjects : MonoBehaviour {
                 return object1;
             }
             */
+            /*
         }
         Debug.Log("array length: "+objects.Length);
         return objects;
+        */
     }
 
     // Ensures a spawnpoint with no obstacles on

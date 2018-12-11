@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-using UnityEngine;﻿
+using UnityEngine;
+using System;
 
 // Controls player's interactions
 public class Dog : MonoBehaviour {
@@ -48,6 +49,12 @@ public class Dog : MonoBehaviour {
     public GameObject ShatteredBox;
     public float shatterSpeed = 0.2f;
 
+    // testing
+    private bool obstacleTooClose=false;
+   // private Renderer render;
+    //private NativeArray<GameObject> objects;
+    //private NativeArray<float> distance;
+
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
     public static bool godMode = false;
@@ -68,7 +75,7 @@ public class Dog : MonoBehaviour {
     public Component[] pieces;
     IEnumerator crateWait (GameObject shatterClone) {
         //Debug.Log("In crateWait!");
-        yield return new WaitForSeconds (2.5f);
+        yield return new WaitForSeconds (0.1f);
         /*
         pieces = shatterClone.GetComponentsInChildren<HingeJoint>();
         foreach (HingeJoint piece in pieces){
@@ -78,7 +85,8 @@ public class Dog : MonoBehaviour {
         //shatterClone.GetComponent<BoxCollider2D>().enabled = true;
         yield return new WaitForSeconds (0.5f); 
         */
-        Destroy(shatterClone);
+        //Destroy(shatterClone);
+        shatterClone.SetActive(false);
     }
 
     // Called once on every gaming session before Start
@@ -90,7 +98,11 @@ public class Dog : MonoBehaviour {
         instance = this;
 
         playerBody = GetComponent<Rigidbody2D> ();
+        //testing
+        //objects=new NativeArray<GameObject>(5, Allocator.TempJob);
+        //distance=new NativeArray<float>(5, Allocator.TempJob);
     }
+
 
     // Called on every game frame
     private void Update () {
@@ -172,7 +184,8 @@ public class Dog : MonoBehaviour {
                 if (powerupOn) {
                     GameObject shatterClone = (GameObject) Instantiate(ShatteredBox, collision.gameObject.transform.position, transform.rotation);
                     //Sijainti: collision.gameObject.transform.position
-                    Destroy(collision.gameObject);
+                    //Destroy(collision.gameObject);
+                    collision.gameObject.SetActive(false);
                     SoundManager.instance.PlaySingle(destroyBox);
                     StartCoroutine (crateWait(shatterClone));
 
@@ -333,13 +346,45 @@ public class Dog : MonoBehaviour {
 
     // Calculates the distance to the next obstacle.
     private bool isObstacleTooClose () {
-        var object1 = SpawnObjects.instance.getCurrentObstacle ();
         var player=GameObject.FindWithTag ("Player");
-        var heading = object1[0].transform.position - player.transform.position;
+        var object1=SpawnObjects.instance.getCurrentObstacle();
+        var heading = object1.transform.position - player.transform.position;
+        //render = gameObject.GetComponent<Renderer>();
         float distance1=100;
+        //RaycastHit hit = new RaycastHit();
+        //if(Physics.Raycast(transform.position, transform.forward, out _hit, distance1))
+        //if(Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
+        //{
+        //    Debug.Log("raycast triggered");
+        //    return true;
+        //    distance1=15;
+        //    Debug.Log("raycast triggered");
+            //if(_hit.transform.tag == "pile")
+            //{
+            // Debug.Log("raycast hit intended target");
+            //}
+        //}
+        //if(gameObject.GetComponent<Renderer>().isVisible && heading.x>0){
         if(heading.x>0){
-            distance1 = Vector2.Distance (player.transform.position, object1[0].transform.position);
+            //Debug.Log("target is visible");
+            distance1 = Vector2.Distance (player.transform.position,  object1.transform.position);
+            GameObject child=null;
+            try{
+                child=object1.transform.Find("crate").gameObject;
+            }catch(NullReferenceException e){
+            }
+            if(child!=null){
+                Debug.Log("target has a child: "+child.name);
+                distance1=Vector2.Distance(player.transform.position, child.transform.position);
+            }
         }
+        //RaycastHit hit=new RaycastHit();
+        //if(Physics.Raycast(transform.position, transform.up, out hit, 0)){
+        //    distance1=0;
+        //}
+        Debug.Log("distance1 = "+distance1);
+        return distance1 < maxDistance;
+        /*
         if(object1.Length>1){
             heading = object1[1].transform.position - player.transform.position;
             float distance2=100;
@@ -364,5 +409,18 @@ public class Dog : MonoBehaviour {
             }
             return distance1 < maxDistance;
         }
+        */
     }
+    /*
+    struct DistanceCalculation : IJob
+    {
+        [ReadOnly]
+        public NativeArray<GameObject> objects;
+        public NativeArray<float> distance;
+
+        public void Execute(){
+            
+        }
+    }
+    */
 }
