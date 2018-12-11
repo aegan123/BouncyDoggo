@@ -145,11 +145,13 @@ private void FixedUpdate() {
 
             } else if (random <= 9) { // 20% cratepiles
                 if (rnd.Next (2) == 1) { // a pile followed immediately by a rock
-                    nextObstacleCountdown = -5;
+                    //nextObstacleCountdown = -5;
                     doubleObstacle = true;
-                    SpawnDoubleObstacle (3);
+                    //SpawnDoubleObstacle (3);
+                    SpawnDoubleObstacle(1);
                 } else {
-                    SpawnCratePile (false);
+                    //SpawnCratePile (false);
+                    SpawnDoubleCrate();
                 }
             } else if(!Dog.instance.isPowerUpOn() && random > 10) //Special powerup box. Not while in superball mode.
            {
@@ -198,11 +200,13 @@ private void FixedUpdate() {
 
             } else if (random <= 8) { // 20% cratepiles
                 if (rnd.Next (2) == 1) { // a pile followed immediately by a rock
-                    nextObstacleCountdown = -5;
+                    //nextObstacleCountdown = -5;
                     doubleObstacle = true;
-                    SpawnDoubleObstacle (3);
+                    //SpawnDoubleObstacle (3);
+                    SpawnDoubleObstacle(1);
                 } else {
-                    SpawnCratePile (false);
+                    //SpawnCratePile (false);
+                    SpawnDoubleCrate();
                 }
             } else if (random <= 10) { // one box followed by three
                 nextObstacleCountdown = -5;
@@ -411,8 +415,8 @@ private void FixedUpdate() {
     public GameObject getCurrentObstacle(){
         GameObject object1=null;
         if(doubleObstacle){
-            Debug.Log("double obstacle");
-            Debug.Log("currentDoubleObstacle = "+currentDoubleObstacle);
+            //Debug.Log("double obstacle");
+            //Debug.Log("currentDoubleObstacle = "+currentDoubleObstacle);
             if(currentDoubleObstacle==0){
                 if(doubleObstacles[doubleObstacles.Length-1]!=null){
                     object1=doubleObstacles[doubleObstacles.Length-1];
@@ -429,8 +433,8 @@ private void FixedUpdate() {
             
             }
         }else{
-            Debug.Log("single obstacle");
-            Debug.Log("currentObstacle = "+currentObstacle);
+            //Debug.Log("single obstacle");
+            //Debug.Log("currentObstacle = "+currentObstacle);
             if(currentObstacle==0){
                 if(obstacles[obstacles.Length-1]!=null){
                     object1=obstacles[obstacles.Length-1];
@@ -446,58 +450,6 @@ private void FixedUpdate() {
             }
         }
         return object1;
-        /*
-        GameObject[] objects=null;
-        if(doubleObstacle){
-            objects=new GameObject[2];
-            if (currentDoubleObstacle==0)
-            {
-                if(doubleObstacles[doubleObstacles.Length-1]==null){
-                    objects[0]=doubleObstacles[currentDoubleObstacle];
-                    objects[1]=doubleObstacles[currentDoubleObstacle+1];
-                }else{
-                    objects[0]=doubleObstacles[doubleObstacles.Length-2];
-                    objects[1]=doubleObstacles[doubleObstacles.Length-1];
-                }
-            }
-            else{
-                objects[0]=doubleObstacles[currentDoubleObstacle-2];
-                objects[1]=doubleObstacles[currentDoubleObstacle-1];
-            }
-            /*
-            var object1 = doubleObstacles[currentDoubleObstacle-1];
-            if(object1 == null){
-                //object1 = doubleObstacles[currentDoubleObstacle - 1];
-                //return object1;
-                return doubleObstacles[currentDoubleObstacle - 2];
-            } else{
-                return object1;
-            }
-            */
-            /*
-        } else{
-            objects=new GameObject[1];
-            if(currentObstacle==0){
-                objects[0]=obstacles[obstacles.Length-1];
-            }
-            else{
-                objects[0]=obstacles[currentObstacle-1];
-            }
-            /*
-            var object1 = obstacles[currentObstacle];
-            if(object1 == null){
-                //object1 = obstacles[currentObstacle - 1];
-                return obstacles[currentObstacle - 1];
-                //return object1;
-            } else{
-                return object1;
-            }
-            */
-            /*
-        }
-        Debug.Log("array length: "+objects.Length);
-        return objects;
-        */
     }
 
     // Ensures a spawnpoint with no obstacles on

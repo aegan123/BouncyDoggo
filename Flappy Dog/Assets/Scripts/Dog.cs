@@ -50,8 +50,7 @@ public class Dog : MonoBehaviour {
     public float shatterSpeed = 0.2f;
 
     // testing
-    private bool obstacleTooClose=false;
-   // private Renderer render;
+    //private Renderer render;
     //private NativeArray<GameObject> objects;
     //private NativeArray<float> distance;
 
@@ -75,8 +74,9 @@ public class Dog : MonoBehaviour {
     public Component[] pieces;
     IEnumerator crateWait (GameObject shatterClone, Collider2D collision) {
         //Debug.Log("In crateWait!");
-        yield return new WaitForSeconds (1f);
-        yield return new WaitForSeconds (2.5f);
+        //hatterClone.GetComponent<BoxCollider2D>().enabled = false;
+        yield return new WaitForSeconds (0.1f);
+        //yield return new WaitForSeconds (2.5f);
         /*
         pieces = shatterClone.GetComponentsInChildren<HingeJoint>();
         foreach (HingeJoint piece in pieces){
@@ -177,7 +177,7 @@ public class Dog : MonoBehaviour {
     // Called on touching colliders set as triggers
     private void OnTriggerEnter2D (Collider2D collision) {
         if (godMode) {
-            Destroy (collision.gameObject);
+            collision.enabled=false;
             return;
         }
         if (!isDead) {
@@ -187,6 +187,7 @@ public class Dog : MonoBehaviour {
                     GameObject shatterClone = (GameObject) Instantiate(ShatteredBox, collision.gameObject.transform.position, transform.rotation);
                     //Sijainti: collision.gameObject.transform.position
                     //Destroy(collision.gameObject);
+                    //collision.enabled=false;
                     collision.gameObject.SetActive(false);
                     SoundManager.instance.PlaySingle(destroyBox);
                     StartCoroutine (crateWait(shatterClone, collision));
@@ -352,24 +353,8 @@ public class Dog : MonoBehaviour {
         var player=GameObject.FindWithTag ("Player");
         var object1=SpawnObjects.instance.getCurrentObstacle();
         var heading = object1.transform.position - player.transform.position;
-        //render = gameObject.GetComponent<Renderer>();
         float distance1=100;
-        //RaycastHit hit = new RaycastHit();
-        //if(Physics.Raycast(transform.position, transform.forward, out _hit, distance1))
-        //if(Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
-        //{
-        //    Debug.Log("raycast triggered");
-        //    return true;
-        //    distance1=15;
-        //    Debug.Log("raycast triggered");
-            //if(_hit.transform.tag == "pile")
-            //{
-            // Debug.Log("raycast hit intended target");
-            //}
-        //}
-        //if(gameObject.GetComponent<Renderer>().isVisible && heading.x>0){
-        if(heading.x>0){
-            //Debug.Log("target is visible");
+        if(gameObject.GetComponent<Renderer>().isVisible && heading.x>0){
             distance1 = Vector2.Distance (player.transform.position,  object1.transform.position);
             GameObject child=null;
             try{
@@ -377,53 +362,12 @@ public class Dog : MonoBehaviour {
             }catch(NullReferenceException e){
             }
             if(child!=null){
-                Debug.Log("target has a child: "+child.name);
+                //Debug.Log("target has a child: "+child.name);
                 distance1=Vector2.Distance(player.transform.position, child.transform.position);
             }
         }
-        //RaycastHit hit=new RaycastHit();
-        //if(Physics.Raycast(transform.position, transform.up, out hit, 0)){
-        //    distance1=0;
-        //}
-        Debug.Log("distance1 = "+distance1);
+        //Debug.Log("distance1 = "+distance1);
+        //Debug.Log("object1: "+object1.gameObject.name);
         return distance1 < maxDistance;
-        /*
-        if(object1.Length>1){
-            heading = object1[1].transform.position - player.transform.position;
-            float distance2=100;
-            if(heading.x>0){
-                distance2=Vector2.Distance (player.transform.position, object1[1].transform.position);
-            }
-            Debug.Log ("Distance to obstacle[0]: " + distance1);
-            Debug.Log("object1[0] = "+object1[0].name);
-            Debug.Log("Distance to obstacle[1]: "+distance2);
-            Debug.Log("object[1] = "+object1[1]);
-            if (object1[0].gameObject.name.Contains("crate pile")) {
-                distance1/=4;
-            }else if(object1[1].gameObject.name.Contains("crate pile")){
-                distance2/=4;
-            }
-            return distance1 < maxDistance || distance2 < maxDistance;
-        }else{
-            Debug.Log ("Distance to obstacle1: " + distance1);
-            Debug.Log("object1[0] = "+object1[0].name);
-            if(object1[0].gameObject.name.Contains("crate pile")){
-                distance1/=4;
-            }
-            return distance1 < maxDistance;
-        }
-        */
     }
-    /*
-    struct DistanceCalculation : IJob
-    {
-        [ReadOnly]
-        public NativeArray<GameObject> objects;
-        public NativeArray<float> distance;
-
-        public void Execute(){
-            
-        }
-    }
-    */
 }
