@@ -71,7 +71,7 @@ private void FixedUpdate() {
         difficultyTimer += Time.deltaTime;
         if (!GameControl.instance.gameOver) {
             // TODO: IDEA: set timer for medium lower if high score is high enough
-            if (difficultyTimer < 0.0f) {
+            if (difficultyTimer < 30.0f) {
                 spawnEasy ();
             } else if (difficultyTimer < 60.0f) {
                 spawnMedium ();
