@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-using UnityEngine;﻿
+using UnityEngine;
+using System;
 
 // Controls player's interactions
 public class Dog : MonoBehaviour {
@@ -45,6 +46,14 @@ public class Dog : MonoBehaviour {
     public AudioClip eatChocolate;
     public AudioClip destroyBox;
 
+    public GameObject ShatteredBox;
+    public float shatterSpeed = 0.2f;
+
+    // testing
+    //private Renderer render;
+    //private NativeArray<GameObject> objects;
+    //private NativeArray<float> distance;
+
     //for testing purposes only!!!
     //When true the Dog doesn't collide with object and points are not counted.
     public static bool godMode = false;
@@ -62,9 +71,28 @@ public class Dog : MonoBehaviour {
             StartCoroutine (Wait ());
         }
     }
+    public Component[] pieces;
+    IEnumerator crateWait (GameObject shatterClone, Collider2D collision) {
+        //Debug.Log("In crateWait!");
+        //hatterClone.GetComponent<BoxCollider2D>().enabled = false;
+        yield return new WaitForSeconds (0.1f);
+        //yield return new WaitForSeconds (2.5f);
+        /*
+        pieces = shatterClone.GetComponentsInChildren<HingeJoint>();
+        foreach (HingeJoint piece in pieces){
+            Debug.Log("Changing collider!");
+            piece.GetComponent<BoxCollider2D>().enabled = false;
+        }
+        //shatterClone.GetComponent<BoxCollider2D>().enabled = true;
+        yield return new WaitForSeconds (0.5f); 
+        */
+        //Destroy(shatterClone);
+        shatterClone.SetActive(false);
+    }
 
     // Called once on every gaming session before Start
     private void Awake () {
+        animator.SetBool ("isDead", false);
         if (instance != this)
         {
             Destroy(instance);
@@ -72,11 +100,15 @@ public class Dog : MonoBehaviour {
         instance = this;
 
         playerBody = GetComponent<Rigidbody2D> ();
+        //testing
+        //objects=new NativeArray<GameObject>(5, Allocator.TempJob);
+        //distance=new NativeArray<float>(5, Allocator.TempJob);
     }
+
 
     // Called on every game frame
     private void Update () {
-        if (isDead == false) {
+        if (!isDead) {
             playerBody.velocity = new Vector2 (0, playerBody.velocity.y);
             if (powerupOn) {
                 //Double jump always available once per bounce
@@ -91,10 +123,10 @@ public class Dog : MonoBehaviour {
                 //Powerup timer
                 powerupTimer -= Time.deltaTime;
                 // If obstacle is too close, extend timer to avoid instant death.
-                if (isObstacleTooClose ()) {
-                    powerupTimer += Time.deltaTime;
-                }
-                if (powerupTimer < 0) {
+                //if (isObstacleTooClose ()) {
+                //    powerupTimer += Time.deltaTime;
+                //}
+                if (powerupTimer < 0 && !isObstacleTooClose()) {
                     DeactivatePowerup ();
                 }
             }
@@ -145,38 +177,47 @@ public class Dog : MonoBehaviour {
     // Called on touching colliders set as triggers
     private void OnTriggerEnter2D (Collider2D collision) {
         if (godMode) {
-            Destroy (collision.gameObject);
+            collision.enabled=false;
             return;
         }
         if (!isDead) {
             //Collision with crates
             if (collision.gameObject.name.Contains("crate")) {
                 if (powerupOn) {
-                    Destroy(collision.gameObject);
+                    GameObject shatterClone = (GameObject) Instantiate(ShatteredBox, collision.gameObject.transform.position, transform.rotation);
+                    //Sijainti: collision.gameObject.transform.position
+                    //Destroy(collision.gameObject);
+                    //collision.enabled=false;
+                    collision.gameObject.SetActive(false);
                     SoundManager.instance.PlaySingle(destroyBox);
+                    StartCoroutine (crateWait(shatterClone, collision));
+
                 } else {
                     Die ();
                 }
             }
             //Collision with rocks
-            else if (collision.gameObject.name.Contains("rock")) {
+            else if (collision.gameObject.name.Contains("rock") || collision.gameObject.name.Contains("cat")) {
                 Die ();
             }
             //Collision with pizzas
             else if (collision.gameObject.name.Contains("pizza")) {
                 EatFood (1); //Pizzas food value = 1
-                Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
+                //Destroy(collision.gameObject);
             }
             //Collision with chocolates
             else if (collision.gameObject.name.Contains("chocolate"))
             {
                 EatBadfood(1); //Chocolate poison value = 1
-                Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
+                //Destroy(collision.gameObject);
             }
             //Collision with boxes
             else if (collision.gameObject.name.Contains("box"))
             {
-                Destroy(collision.gameObject);
+                //Destroy(collision.gameObject);
+                collision.gameObject.SetActive(false);
                 SoundManager.instance.PlaySingle(destroyBox);
             }
         }
@@ -225,6 +266,7 @@ public class Dog : MonoBehaviour {
     // Dying functionality
     private void Die () {
         isDead = true;
+        animator.SetBool ("isDead", true);
         //Stops music when dead
         SoundManager.instance.superMode.Stop ();
         SoundManager.instance.backgroudMusic.Stop ();
@@ -239,7 +281,9 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.PlaySingle (eatPizza);
         GameControl.instance.AddPoint (10);
         foodCount += foodValue;
-        GameControl.instance.eatFood(foodCount);
+        if(!powerupOn){
+            GameControl.instance.eatFood(foodCount);
+        }
         if (foodCount >= powerupFoodLimit)
         {
             ActivatePowerup();
@@ -250,9 +294,9 @@ public class Dog : MonoBehaviour {
     // Poison functionality
     private void EatBadfood(int poisonValue)
     {
-        SoundManager.instance.PlaySingle(destroyBox);
+        SoundManager.instance.PlaySingle(eatChocolate);
         foodCount -= poisonValue;
-        GameControl.instance.eatFood (foodCount);
+        GameControl.instance.AddPoint(-10);
         if (foodCount < 0)
         {
             if (powerupOn)
@@ -262,8 +306,11 @@ public class Dog : MonoBehaviour {
             }
             else
             {
+                GameControl.instance.eatFood (0);
                 Die();
             }
+        }else{
+            GameControl.instance.eatFood (foodCount);
         }
     }
 
@@ -292,7 +339,7 @@ public class Dog : MonoBehaviour {
         SoundManager.instance.backgroudMusic.Play ();
         doubleJumpCount = 0;
         Bounce (); //Exit's rolling with a bounce
-        powerupOn = false; //TODO: This only after certain safe time?
+        powerupOn = false;
         GameControl.instance.eatFood(0);
     }
 
@@ -303,8 +350,24 @@ public class Dog : MonoBehaviour {
 
     // Calculates the distance to the next obstacle.
     private bool isObstacleTooClose () {
-        var distance = Vector2.Distance (GameObject.FindWithTag ("Player").transform.position, SpawnObjects.instance.getCurrentObstacle ().transform.position);
-        //Debug.Log ("Distance to obstacle: " + distance);
-        return distance < maxDistance;
+        var player=GameObject.FindWithTag ("Player");
+        var object1=SpawnObjects.instance.getCurrentObstacle();
+        var heading = object1.transform.position - player.transform.position;
+        float distance1=100;
+        if(gameObject.GetComponent<Renderer>().isVisible && heading.x>0){
+            distance1 = Vector2.Distance (player.transform.position,  object1.transform.position);
+            GameObject child=null;
+            try{
+                child=object1.transform.Find("crate").gameObject;
+            }catch(NullReferenceException e){
+            }
+            if(child!=null){
+                //Debug.Log("target has a child: "+child.name);
+                distance1=Vector2.Distance(player.transform.position, child.transform.position);
+            }
+        }
+        //Debug.Log("distance1 = "+distance1);
+        //Debug.Log("object1: "+object1.gameObject.name);
+        return distance1 < maxDistance;
     }
 }

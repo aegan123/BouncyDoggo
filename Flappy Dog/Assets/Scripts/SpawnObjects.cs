@@ -65,10 +65,8 @@ public class SpawnObjects : MonoBehaviour {
         doubleObstacles = new GameObject[doubleObstaclePoolSize];
         foods = new GameObject[foodPoolSize];
     }
-
-    // Called on every game frame
-    private void Update () {
-        nextObstacleCountdown += Time.deltaTime;
+private void FixedUpdate() {
+    nextObstacleCountdown += Time.deltaTime;
         nextFoodCountdown += Time.deltaTime;
         difficultyTimer += Time.deltaTime;
         if (!GameControl.instance.gameOver) {
@@ -81,7 +79,11 @@ public class SpawnObjects : MonoBehaviour {
                 spawnHard ();
             }
         }
-    }
+}
+    // Called on every game frame
+    //private void Update () {
+        
+    //}
 
     private void spawnEasy () {
         //Spawn obstacles
@@ -119,22 +121,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2) //66% pizzas
-           {
-                SpawnPizza();
-            }
-            else
-            {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1)
-            {
-                currentFood = 0;
-            }
+            spawnFood();
         }
     }
 
@@ -158,11 +145,13 @@ public class SpawnObjects : MonoBehaviour {
 
             } else if (random <= 9) { // 20% cratepiles
                 if (rnd.Next (2) == 1) { // a pile followed immediately by a rock
-                    nextObstacleCountdown = -5;
+                    //nextObstacleCountdown = -5;
                     doubleObstacle = true;
-                    SpawnDoubleObstacle (3);
+                    //SpawnDoubleObstacle (3);
+                    SpawnDoubleObstacle(1);
                 } else {
-                    SpawnCratePile (false);
+                    //SpawnCratePile (false);
+                    SpawnDoubleCrate();
                 }
             } else if(!Dog.instance.isPowerUpOn() && random > 10) //Special powerup box. Not while in superball mode.
            {
@@ -188,22 +177,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2) //66% pizzas
-           {
-                SpawnPizza();
-            }
-            else
-            {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1)
-            {
-                currentFood = 0;
-            }
+            spawnFood();
         }
 
     }
@@ -226,11 +200,13 @@ public class SpawnObjects : MonoBehaviour {
 
             } else if (random <= 8) { // 20% cratepiles
                 if (rnd.Next (2) == 1) { // a pile followed immediately by a rock
-                    nextObstacleCountdown = -5;
+                    //nextObstacleCountdown = -5;
                     doubleObstacle = true;
-                    SpawnDoubleObstacle (3);
+                    //SpawnDoubleObstacle (3);
+                    SpawnDoubleObstacle(1);
                 } else {
-                    SpawnCratePile (false);
+                    //SpawnCratePile (false);
+                    SpawnDoubleCrate();
                 }
             } else if (random <= 10) { // one box followed by three
                 nextObstacleCountdown = -5;
@@ -260,18 +236,7 @@ public class SpawnObjects : MonoBehaviour {
         }
         //Food spawns
         if(foodAllowedToSpawn && CanSpawnFood()){
-            //Determines which food to spawn by random
-            float random = rnd.Next(0, 3);
-            if(random <= 2){ //66% pizzas
-                SpawnPizza();
-            } else {
-                SpawnChocolate();
-            }
-            currentFood++;
-            // Reset back to the beginning of the array.
-            if (currentFood >= foods.Length - 1) {
-                currentFood = 0;
-            }
+            spawnFood();
         }
     }
 
@@ -382,16 +347,35 @@ public class SpawnObjects : MonoBehaviour {
         currentDoubleObstacle++;
     }
 
+    // Spawns all types of food.
+    private void spawnFood(){
+            //Determines which food to spawn by random
+            int random = rnd.Next(4);
+            if(random <= 2) //66% pizzas
+           {
+                SpawnPizza();
+            }
+            else
+            {
+                SpawnChocolate();
+            }
+            currentFood++;
+            // Reset back to the beginning of the array.
+            if (currentFood >= foods.Length - 1)
+            {
+                currentFood = 0;
+            }
+    }
     // Pizza spawning
     private void SpawnPizza () {
         //Destroy(foods[currentFood]);
-        foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
+        foods[currentFood] = (GameObject) Instantiate (pizzaPrefab, FoodSpawnPoint(spawnDistance, rnd.Next(6)), Quaternion.identity);
     }
 
     // Chocolate spawning
     private void SpawnChocolate () {
         //Destroy(foods[currentFood]);
-        foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, new Vector2 (spawnDistance, rnd.Next (6)), Quaternion.identity);
+        foods[currentFood] = (GameObject) Instantiate (chocolatePrefab, FoodSpawnPoint(spawnDistance, rnd.Next(6)), Quaternion.identity);
     }
 
     //****************************
@@ -429,26 +413,54 @@ public class SpawnObjects : MonoBehaviour {
     // Called by other scripts.
     // Returns current obstacle on screen.
     public GameObject getCurrentObstacle(){
+        GameObject object1=null;
         if(doubleObstacle){
-            var object1 = doubleObstacles[currentDoubleObstacle];
-            if(object1 == null){
-                //object1 = doubleObstacles[currentDoubleObstacle - 1];
-                //return object1;
-                return doubleObstacles[currentDoubleObstacle - 1];
-            } else{
-                return object1;
+            //Debug.Log("double obstacle");
+            //Debug.Log("currentDoubleObstacle = "+currentDoubleObstacle);
+            if(currentDoubleObstacle==0){
+                if(doubleObstacles[doubleObstacles.Length-1]!=null){
+                    object1=doubleObstacles[doubleObstacles.Length-1];
+                }else
+                {
+                    object1=doubleObstacles[currentDoubleObstacle];
+                }
+            }else{
+                if(doubleObstacles[currentDoubleObstacle]==null){
+                    object1=doubleObstacles[currentDoubleObstacle-1];
+                }else{
+                    object1=doubleObstacles[currentDoubleObstacle];
+                }
+            
             }
-
-        } else{
-            var object1 = obstacles[currentObstacle];
-            if(object1 == null){
-                //object1 = obstacles[currentObstacle - 1];
-                return obstacles[currentObstacle - 1];
-                //return object1;
-            } else{
-                return object1;
+        }else{
+            //Debug.Log("single obstacle");
+            //Debug.Log("currentObstacle = "+currentObstacle);
+            if(currentObstacle==0){
+                if(obstacles[obstacles.Length-1]!=null){
+                    object1=obstacles[obstacles.Length-1];
+                }else{
+                    object1=obstacles[currentObstacle];
+                }
+            }else{
+                if(obstacles[currentObstacle]==null){
+                    object1=obstacles[currentObstacle-1];
+                }else{
+                    object1=obstacles[currentObstacle];
+                }
             }
         }
+        return object1;
+    }
 
+    // Ensures a spawnpoint with no obstacles on
+    private Vector2 FoodSpawnPoint(float x, float y)
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(new Vector2(x, y), 3);
+        foreach (Collider2D col in hitColliders)
+        {
+            //Debug.Log("collider hit, moving onward");
+            return FoodSpawnPoint(x + 2, y);
+        }
+        return new Vector2(x, y);
     }
 }
