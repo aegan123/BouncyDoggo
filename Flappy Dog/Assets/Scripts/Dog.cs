@@ -197,7 +197,7 @@ public class Dog : MonoBehaviour {
                 }
             }
             //Collision with rocks
-            else if (collision.gameObject.name.Contains("rock")) {
+            else if (collision.gameObject.name.Contains("rock") || collision.gameObject.name.Contains("cat")) {
                 Die ();
             }
             //Collision with pizzas
