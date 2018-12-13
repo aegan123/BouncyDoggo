@@ -184,11 +184,12 @@ public class Dog : MonoBehaviour {
             //Collision with crates
             if (collision.gameObject.name.Contains("crate")) {
                 if (powerupOn) {
+                    //Debug.Log("COLLISION: " + collision.gameObject.name);
                     GameObject shatterClone = (GameObject) Instantiate(ShatteredBox, collision.gameObject.transform.position, transform.rotation);
                     //Sijainti: collision.gameObject.transform.position
-                    //Destroy(collision.gameObject);
+                    Destroy(collision.gameObject);
                     //collision.enabled=false;
-                    collision.gameObject.SetActive(false);
+                    //collision.gameObject.SetActive(false);
                     SoundManager.instance.PlaySingle(destroyBox);
                     StartCoroutine (crateWait(shatterClone, collision));
 
@@ -265,6 +266,7 @@ public class Dog : MonoBehaviour {
 
     // Dying functionality
     private void Die () {
+        DeactivatePowerup();
         isDead = true;
         animator.SetBool ("isDead", true);
         //Stops music when dead
