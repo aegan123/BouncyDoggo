@@ -251,7 +251,7 @@ private void FixedUpdate() {
     // Single crate (normal and special powerupbox)
     // params: special: spawns powerup box
     //params: tupla: spawn a box as part of a double obstacle
-    private void SpawnCrate (bool special, bool tupla) {
+    private GameObject SpawnCrate (bool special, bool tupla) {
         //Destroy(obstacles[currentObstacle]);
         if (special) {
             obstacles[currentObstacle] = (GameObject) Instantiate (powerUpBoxPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
@@ -260,8 +260,10 @@ private void FixedUpdate() {
                 obstacles[currentObstacle] = (GameObject) Instantiate (cratePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
             } else {
                 doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (cratePrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
+                return doubleObstacles[currentDoubleObstacle]; //Return the spawned box (cat will be able to get a ref to this)
             }
         }
+        return null;
     }
 
     // Crate pile
@@ -307,10 +309,11 @@ private void FixedUpdate() {
     // Cat spawning
     // Param: tupla: cat is part of a double obstacle
     // param: height: height where to spawn. 0==ground, else is on top of a crate.
-    private void spawnCat (bool tupla, float height) {
+    private void spawnCat (bool tupla, float height, GameObject boxUnder) {
         //Destroy(obstacles[currentObstacle]); //(TEST) Ensures the deletion of the earlier obstacle
-        if (tupla) {
+        if (tupla && boxUnder != null) {
             doubleObstacles[currentDoubleObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, height + 0.95f), Quaternion.identity);
+            doubleObstacles[currentDoubleObstacle].GetComponent<FallingObject>().SetObjectUnder(boxUnder);
         } else{
             obstacles[currentObstacle] = (GameObject) Instantiate (catPrefab, new Vector2 (spawnDistance, 0), Quaternion.identity);
         }
@@ -329,9 +332,11 @@ private void FixedUpdate() {
                 SpawnRock(true, false, 3);
                 break;
             case (2):
-                SpawnCrate(false, true);
+                GameObject catBoxPrefab = SpawnCrate(false, true);
+                GameObject catBox = catBoxPrefab.transform.GetChild(0).gameObject;
+                Debug.Log("OBJECT UNDER CAT: " + catBox.name);
                 currentDoubleObstacle++;
-                spawnCat(true, doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(1, 1, 0).y - doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(0, 0, 0).y);
+                spawnCat(true, doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(1, 1, 0).y - doubleObstacles[currentDoubleObstacle - 1].transform.TransformPoint(0, 0, 0).y, catBox);
                 break;
             case (3):
                 SpawnCratePile(true);

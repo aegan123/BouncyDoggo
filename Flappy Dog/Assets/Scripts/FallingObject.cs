@@ -8,7 +8,8 @@ public class FallingObject : MonoBehaviour
     public GameObject objectUnder;
 
     private Rigidbody2D objectBody;
-    private bool onGround;
+    private bool active;
+    private bool catJumped;
 
 
     // Called once on every gaming session before Start
@@ -17,25 +18,33 @@ public class FallingObject : MonoBehaviour
         objectBody = GetComponent<Rigidbody2D>();
     }
 
-    // Called on every game frame
-    private void Update()
+    private void Start()
     {
-        if (objectUnder == null)
+        if (objectUnder != null)
         {
-            if (!onGround)
-            {
-                objectBody.velocity = new Vector2(objectBody.velocity.x, -fallingSpeed);
-            }
-            else
-            {
-                objectBody.velocity = new Vector2(objectBody.velocity.x, 0);
-            }
+            active = true;
         }
     }
 
-    // Called when hitting ground after falling
-    private void OnCollisionEnter2D(Collision2D collision)
+    // Called on every game frame
+    private void Update()
     {
-        onGround = true;
+        if (active && objectUnder == null)
+        {
+            if (objectBody.gameObject.name.Contains("cat"))
+            {
+                foreach (Collider2D col in objectBody.gameObject.GetComponents<Collider2D>())
+                {
+                    Debug.Log("Disabled cat collider");
+                    col.enabled = false;
+                }
+            }
+            objectBody.velocity = new Vector2(objectBody.velocity.x, -fallingSpeed);
+        }
+    }
+
+    public void SetObjectUnder(GameObject obj)
+    {
+        objectUnder = obj;
     }
 }
